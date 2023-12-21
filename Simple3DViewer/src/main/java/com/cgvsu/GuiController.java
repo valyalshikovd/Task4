@@ -12,6 +12,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
+
+import java.awt.event.KeyEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
@@ -24,7 +26,7 @@ import com.cgvsu.render_engine.Camera;
 
 public class GuiController {
 
-    final private float TRANSLATION = 0.5F;
+    final private float TRANSLATION = 10;
 
     @FXML
     AnchorPane anchorPane;
@@ -115,5 +117,14 @@ public class GuiController {
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) {
         camera.movePosition(new ThreeDimensionalVector(0, -TRANSLATION, 0));
+    }
+
+    public void handleCameraRightMove(ActionEvent actionEvent) {
+        System.out.println("Клавиша D нажата");
+    }
+
+    public void handleCameraLeftMove(ActionEvent actionEvent) {
+        camera.movePosition(new ThreeDimensionalVector(0, -TRANSLATION, 0));
+        System.out.println("Клавиша A нажата");
     }
 }

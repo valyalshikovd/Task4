@@ -7,8 +7,8 @@ import com.cgvsu.Math.Vectors.*;
 public class Camera {
 
     public Camera(
-            final Vector position,
-            final Vector target,
+            final ThreeDimensionalVector position,
+            final ThreeDimensionalVector target,
             final float fov,
             final float aspectRatio,
             final float nearPlane,
@@ -49,11 +49,11 @@ public class Camera {
         this.target = target.addition(translation);
     }
 
-    FourDimensionalMatrix getViewMatrix() {
+    public FourDimensionalMatrix getViewMatrix() {
         return GraphicConveyor.lookAt(position,target);
     }
 
-    FourDimensionalMatrix getProjectionMatrix() {
+    public FourDimensionalMatrix getProjectionMatrix() {
         return GraphicConveyor.perspective(fov, aspectRatio, nearPlane, farPlane);
     }
 

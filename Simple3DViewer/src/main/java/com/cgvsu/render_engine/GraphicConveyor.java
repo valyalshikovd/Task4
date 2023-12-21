@@ -8,6 +8,7 @@ import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Math.Vectors.Vector;
 
 import javax.vecmath.*;
+import java.util.Arrays;
 
 public class GraphicConveyor {
 
@@ -30,6 +31,8 @@ public class GraphicConveyor {
         ThreeDimensionalVector resultZ = new ThreeDimensionalVector(tempNd.getArrValues()[0], tempNd.getArrValues()[1],tempNd.getArrValues()[2]);
         ThreeDimensionalVector resultX = up.vectorProduct(resultZ);
         ThreeDimensionalVector resultY = resultZ.vectorProduct(resultX);
+
+
 
         resultX = resultX.normalization();
         resultY =resultY.normalization();
