@@ -201,7 +201,7 @@
                            <Font size="18.0" />
                         </font>
                      </Label>
-                     <Slider layoutX="66.0" layoutY="109.0" prefHeight="14.0" prefWidth="147.0" />
+                     <Slider fx:id="sliderTheme" layoutX="66.0" layoutY="109.0" onMouseReleased="#handlechangeTheme"  prefHeight="14.0" prefWidth="147.0"/>
                      <Label layoutX="34.0" layoutY="107.0" text="Day" />
                      <Label layoutX="218.0" layoutY="107.0" text="Night" />
                   </children>

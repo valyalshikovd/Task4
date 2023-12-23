@@ -12,6 +12,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Slider;
+import javafx.scene.effect.Effect;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
@@ -23,6 +25,10 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
 import javax.vecmath.Vector3f;
+import javafx.scene.effect.ColorAdjust;
+
+
+
 
 import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
@@ -37,6 +43,8 @@ public class GuiController {
 
     @FXML
     private Canvas canvas;
+    @FXML
+    private Slider sliderTheme;
 
     private Model mesh = null;
     private MyRenderEngine renderEngine;
@@ -138,5 +146,16 @@ public class GuiController {
     public void handleCameraLeftMove(ActionEvent actionEvent) {
         camera.movePosition(new ThreeDimensionalVector(0, -TRANSLATION, 0));
         System.out.println("Клавиша A нажата");
+    }
+
+    @FXML
+    public void handlechangeTheme(ActionEvent actionEvent){
+        sliderTheme.valueProperty().addListener((observable, oldValue, newValue) -> {
+          //  ColorAdjust colorAdjust = new ColorAdjust();
+          //  colorAdjust.setBrightness(newValue.floatValue() - 1);
+            anchorPane.setStyle("background-color: rgb(" + (256 - (int)(newValue.intValue() * 2.55)) + "," + (256 - (int)(newValue.intValue() * 2.55)) + "," + (256 - (int)(newValue.intValue() * 2.55)) + ")");
+          //  anchorPane.setEffect(colorAdjust);
+            System.out.println("hui");
+        });
     }
 }
