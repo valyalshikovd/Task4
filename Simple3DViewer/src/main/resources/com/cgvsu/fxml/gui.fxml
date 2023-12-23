@@ -88,7 +88,7 @@
        </Tab>
      </tabs>
    </TabPane>
-   <TabPane prefHeight="905.0" prefWidth="300.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.rightAnchor="10.0">
+   <TabPane side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.rightAnchor="10.0">
      <tabs>
        <Tab text="Move">
          <content>

@@ -25,12 +25,17 @@ public class Model {
     }
 
     public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height){
+        triangulate();
         for (Polygon p : polygons){
             p.drawPolygon(g, modelViewProjectionMatrix, this,m,width,height);
         }
     }
     public boolean isEmpty() {
         return vertices.isEmpty();
+    }
+
+    public void triangulate(){
+        polygons = (ArrayList<Polygon>) Triangulation.triangulatePolygons(polygons);
     }
 
 }

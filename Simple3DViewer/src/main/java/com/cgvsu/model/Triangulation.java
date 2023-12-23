@@ -90,8 +90,22 @@ public class Triangulation {
         if (saved.isEmpty()) {
             return new ThreeDimensionalVector(0,0,0);
         }
+        ThreeDimensionalVector curr = new ThreeDimensionalVector(0,0,0);
+        for(ThreeDimensionalVector v : saved){
+            curr = (ThreeDimensionalVector) curr.addition(v);
+        }
 
-        return null; //sum(saved).divide(saved.size());
+        return  (ThreeDimensionalVector) curr.scale(1.0/saved.size());
+    }
+
+    public static List<Polygon> triangulatePolygons(List<Polygon> initialPolygons) {
+        List<Polygon> triangulationPolygons = new ArrayList<>();
+
+        for (Polygon polygon : initialPolygons) {
+            triangulationPolygons.addAll(Triangulation.triangulation(polygon));
+        }
+
+        return triangulationPolygons;
     }
 
 }
