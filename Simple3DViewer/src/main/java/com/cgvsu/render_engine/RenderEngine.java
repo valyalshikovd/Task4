@@ -1,19 +1,15 @@
 package com.cgvsu.render_engine;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import com.cgvsu.Math.AffineTransormation.AffineTransformation;
 import com.cgvsu.Math.Matrix.FourDimensionalMatrix;
-import com.cgvsu.Math.Matrix.Matrix;
 import com.cgvsu.Math.Matrix.NDimensionalMatrix;
-import com.cgvsu.Math.Vectors.FourDimensionalVector;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
-import com.cgvsu.Math.Vectors.Vector;
-import com.cgvsu.model.Polygon;
+import com.cgvsu.model.Model;
 import javafx.scene.canvas.GraphicsContext;
 import javax.vecmath.*;
-import com.cgvsu.model.Model;
+
 import static com.cgvsu.render_engine.GraphicConveyor.*;
 
 public class RenderEngine {

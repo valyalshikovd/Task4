@@ -5,7 +5,6 @@ import com.cgvsu.Math.Vectors.TwoDimensionalVector;
 import com.cgvsu.model.Model;
 import com.cgvsu.model.Polygon;
 
-import javax.vecmath.Vector2f;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,10 +32,10 @@ public class ObjWriter {
         }
 
         try (PrintWriter printWriter = new PrintWriter(file)) {
-            writeVertices(printWriter, model.getVertices());
-            writeTextureVertices(printWriter, model.getTextureVertices());
-            writeNormals(printWriter, model.getNormals());
-            writePolygons(printWriter, model.getPolygons());
+            writeVertices(printWriter, model.vertices);
+            writeTextureVertices(printWriter, model.textureVertices);
+            writeNormals(printWriter, model.normals);
+            writePolygons(printWriter, model.polygons);
         } catch (IOException e) {
             throw new ObjWriterException("Error writing to file: " + fileName + " " + e.getMessage());
         }

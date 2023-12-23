@@ -27,9 +27,9 @@ public class Triangulation {
             List<Integer> threeNormalIndices = getIndicesListForCurrentPolygon(normalIndices, index);
 
             Polygon triangularPolygon = new Polygon();
-            triangularPolygon.setVertexIndices(threeVertexIndices);
-            triangularPolygon.setTextureVertexIndices(threeTextureVertexIndices);
-            triangularPolygon.setNormalIndices(threeNormalIndices);
+            triangularPolygon.setVertexIndices((ArrayList<Integer>) threeVertexIndices);
+            triangularPolygon.setTextureVertexIndices((ArrayList<Integer>) threeTextureVertexIndices);
+            triangularPolygon.setNormalIndices((ArrayList<Integer>) threeNormalIndices);
 
             triangularPolygons.add(triangularPolygon);
         }
@@ -91,7 +91,7 @@ public class Triangulation {
             return new ThreeDimensionalVector(0,0,0);
         }
 
-        return sum(saved).divide(saved.size());
+        return null; //sum(saved).divide(saved.size());
     }
 
 }

@@ -1,17 +1,10 @@
 package com.cgvsu.render_engine;
 
-import com.cgvsu.Math.AffineTransormation.AffineTransformation;
 import com.cgvsu.Math.Matrix.FourDimensionalMatrix;
 import com.cgvsu.Math.Matrix.NDimensionalMatrix;
-import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.model.Model;
-import com.cgvsu.objreader.ObjReader;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.shape.Mesh;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
