@@ -1,7 +1,6 @@
 package com.cgvsu;
 
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
-import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.RenderEngine;
 import javafx.fxml.FXML;
 import javafx.animation.Animation;
@@ -15,12 +14,10 @@ import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.awt.event.KeyEvent;
-import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
-import java.util.List;
 import javax.vecmath.Vector3f;
 
 import com.cgvsu.model.Model;
@@ -130,5 +127,4 @@ public class GuiController {
         camera.movePosition(new ThreeDimensionalVector(0, -TRANSLATION, 0));
         System.out.println("Клавиша A нажата");
     }
-
 }

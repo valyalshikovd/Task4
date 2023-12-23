@@ -18,13 +18,20 @@ import static com.cgvsu.render_engine.GraphicConveyor.*;
 
 public class RenderEngine {
 
+    private static GraphicsContext graphicsContext;
+    private static Camera camera;
+    private static Model mesh;
+    private static int width;
+    private static int height;
+
     public static void render(
-            final GraphicsContext graphicsContext,
-            final Camera camera,
-            final Model mesh,
-            final int width,
-            final int height)
+            final GraphicsContext graphicsContextInput,
+            final Camera cameraInput,
+            final Model meshInput,
+            final int widthInput,
+            final int heightInput)
     {
+        graphicsContext = graphicsContext;
         FourDimensionalMatrix modelMatrix = rotateScaleTranslate();
         FourDimensionalMatrix viewMatrix =  camera.getViewMatrix();
         FourDimensionalMatrix projectionMatrix = camera.getProjectionMatrix();
@@ -66,6 +73,11 @@ public class RenderEngine {
                         resultPoints.get(0).y);
         }
     }
+
+    public static void drawPolygon(){
+
+    }
+
 
     public static ThreeDimensionalVector multiplyMatrix4ByVector3(final NDimensionalMatrix matrix, final ThreeDimensionalVector vertex) {
         final double x  = matrix.getMatrixInVectors()[0].getArrValues()[0] * vertex.getA() +  matrix.getMatrixInVectors()[1].getArrValues()[0] * vertex.getB() + matrix.getMatrixInVectors()[2].getArrValues()[0] * vertex.getC() + matrix.getMatrixInVectors()[3].getArrValues()[0];

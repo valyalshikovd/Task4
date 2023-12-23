@@ -21,23 +21,4 @@ public class Model {
         this.polygons = polygons;
     }
 
-    public ArrayList<ThreeDimensionalVector> getVertices() {
-        return vertices;
-    }
-
-    public ArrayList<TwoDimensionalVector> getTextureVertices() {
-        return textureVertices;
-    }
-
-    public ArrayList<ThreeDimensionalVector> getNormals() {
-        return normals;
-    }
-
-    public ArrayList<Polygon> getPolygons() {
-        return polygons;
-    }
-
-    public boolean isEmpty() {
-        return vertices.isEmpty();
-    }
 }
