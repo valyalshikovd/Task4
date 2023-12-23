@@ -1,6 +1,10 @@
 package com.cgvsu;
 
+import com.cgvsu.Math.AffineTransormation.AffineTransformation;
+import com.cgvsu.Math.Matrix.NDimensionalMatrix;
+import com.cgvsu.Math.Vectors.NDimensionalVector;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
+import com.cgvsu.render_engine.MyRenderEngine;
 import com.cgvsu.render_engine.RenderEngine;
 import javafx.fxml.FXML;
 import javafx.animation.Animation;
@@ -35,6 +39,7 @@ public class GuiController {
     private Canvas canvas;
 
     private Model mesh = null;
+    private MyRenderEngine renderEngine;
 
     private Camera camera = new Camera(
             new ThreeDimensionalVector(0, 0, 100),
@@ -51,21 +56,26 @@ public class GuiController {
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
 
-        KeyFrame frame = new KeyFrame(Duration.millis(15), event -> {
-            double width = canvas.getWidth();
-            double height = canvas.getHeight();
+        double width = canvas.getWidth();
+        double height = canvas.getHeight();
+
+        renderEngine = new MyRenderEngine(camera, (int) width, (int) height);
+
+
+        KeyFrame frame = new KeyFrame(Duration.millis(60), event -> {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
             camera.setAspectRatio((float) (width / height));
+            renderEngine.setCamera(camera, (int) width, (int) height);
+            renderEngine.drawAllMeshes(canvas.getGraphicsContext2D());
+            //System.out.println(renderEngine.getListMesh());
 
-            if (mesh != null) {
-                RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh, (int) width, (int) height);
-            }
         });
 
         timeline.getKeyFrames().add(frame);
         timeline.play();
     }
+
 
     @FXML
     private void onOpenModelMenuItemClick() {
@@ -83,6 +93,8 @@ public class GuiController {
         try {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
+            mesh.m = (NDimensionalMatrix)  new AffineTransformation().translate(20,1,1);
+            renderEngine.addMesh(mesh);
             // todo: обработка ошибок
         } catch (IOException exception) {
 
