@@ -88,11 +88,11 @@
        </Tab>
      </tabs>
    </TabPane>
-   <TabPane side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.rightAnchor="10.0">
+   <TabPane fx:id="mainPanel" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.rightAnchor="10.0">
      <tabs>
        <Tab text="Move">
          <content>
-           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="882.0" prefWidth="271.0">
+           <AnchorPane fx:id="sliderMove" minHeight="0.0" minWidth="0.0" prefHeight="882.0" prefWidth="271.0">
                   <children>
                      <Label layoutX="91.0" layoutY="14.0" text="Translate">
                         <font>
@@ -172,7 +172,7 @@
        </Tab>
        <Tab text="Render">
          <content>
-           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+           <AnchorPane fx:id="sliderRender" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
                      <CheckBox layoutX="46.0" layoutY="101.0" mnemonicParsing="false" text="Fill">
                         <font>
@@ -194,14 +194,14 @@
        </Tab>
          <Tab text="Theme">
            <content>
-             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+             <AnchorPane fx:id="sliderTheme2"  minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
                      <Label layoutX="64.0" layoutY="45.0" text="Background theme">
                         <font>
                            <Font size="18.0" />
                         </font>
                      </Label>
-                     <Slider fx:id="sliderTheme" layoutX="66.0" layoutY="109.0" onMouseReleased="#handlechangeTheme"  prefHeight="14.0" prefWidth="147.0"/>
+                     <Slider fx:id="sliderTheme" layoutX="66.0" layoutY="109.0" prefHeight="14.0" prefWidth="147.0"/>
                      <Label layoutX="34.0" layoutY="107.0" text="Day" />
                      <Label layoutX="218.0" layoutY="107.0" text="Night" />
                   </children>
