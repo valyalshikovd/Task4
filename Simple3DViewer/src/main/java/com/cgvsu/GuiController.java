@@ -5,6 +5,8 @@ import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.MyRenderEngine;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -14,7 +16,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
@@ -38,6 +42,12 @@ public class GuiController {
     public AnchorPane sliderRender;
     public AnchorPane sliderMove;
     public TabPane mainPanel;
+    public TextField textFieldTranslationX;
+    public TextField textFieldTranslationY;
+    public TextField textFieldTranslationZ;
+    public TextField textFieldRotateX;
+    public TextField textFieldRotateY;
+    public TextField textFieldRotateZ;
 
     @FXML
     AnchorPane anchorPane;
@@ -51,6 +61,8 @@ public class GuiController {
 
     private Model mesh = null;
     private MyRenderEngine renderEngine;
+
+    private ObservableList<String> items = FXCollections.observableArrayList();
 
     private Camera camera = new Camera(
             new ThreeDimensionalVector(0, 0, 100),
@@ -71,6 +83,10 @@ public class GuiController {
         colorAdjust.setBrightness(sliderTheme.getValue() - 1);
         canvas.setEffect(colorAdjust);
 
+        ObservableList<String> items = FXCollections.observableArrayList(
+                "Item 1", "Item 2", "Item 3", "Item 4");
+
+        listViewModels.setItems(items);
 
         sliderTheme.valueProperty().addListener((observable, oldValue, newValue) -> {
             colorAdjust.setBrightness(newValue.floatValue() - 1);
@@ -113,13 +129,15 @@ public class GuiController {
             return;
         }
 
+
         Path fileName = Path.of(file.getAbsolutePath());
 
         try {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
-            mesh.affineMatrix = (NDimensionalMatrix)  new AffineTransformation().translate(20,1,1);
-            renderEngine.getLoadedModels().put(fileContent, mesh);
+            renderEngine.getLoadedModels().put(fileName.toString(), mesh);
+            items.add(fileName.toString());
+            listViewModels.setItems(items);
             // todo: обработка ошибок
         } catch (IOException exception) {
 
@@ -174,5 +192,33 @@ public class GuiController {
 
         // List<String> fileContent2 = ObjWriter.write("newmodel", changedModel);
         ObjWriter.write("file", changedModel);
+    }
+
+    public void handleModelList(MouseEvent mouseEvent) {
+        renderEngine.currentModelName = listViewModels.getSelectionModel().getSelectedItems().get(0);
+    }
+
+    public void handleTextFieldActionXTranslate(ActionEvent actionEvent) {
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translationMatrix = (NDimensionalMatrix)  new AffineTransformation().translate(Integer.parseInt(textFieldTranslationX.getText()), Integer.parseInt(textFieldTranslationY.getText()) ,Integer.parseInt(textFieldTranslationZ.getText()));
+    }
+
+    public void handleTextFieldActionYTranslate(ActionEvent actionEvent) {
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translationMatrix = (NDimensionalMatrix)  new AffineTransformation().translate(Integer.parseInt(textFieldTranslationX.getText()), Integer.parseInt(textFieldTranslationY.getText()) ,Integer.parseInt(textFieldTranslationZ.getText()));
+    }
+
+    public void handleTextFieldActionZTranslate(ActionEvent actionEvent) {
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translationMatrix = (NDimensionalMatrix)  new AffineTransformation().translate(Integer.parseInt(textFieldTranslationX.getText()), Integer.parseInt(textFieldTranslationY.getText()) ,Integer.parseInt(textFieldTranslationZ.getText()));
+    }
+
+    public void handleRotateX(ActionEvent actionEvent) {
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotationMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
+    }
+
+    public void handleRotateY(ActionEvent actionEvent) {
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotationMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
+    }
+
+    public void handleRotateZ(ActionEvent actionEvent) {
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotationMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
     }
 }
