@@ -211,14 +211,14 @@ public class GuiController {
     }
 
     public void handleRotateX(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotationMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
     }
 
     public void handleRotateY(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotationMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
     }
 
     public void handleRotateZ(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotationMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
     }
 }
