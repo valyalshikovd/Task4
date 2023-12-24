@@ -12,7 +12,7 @@ public class Model {
     public ArrayList<TwoDimensionalVector> textureVertices;
     public ArrayList<ThreeDimensionalVector> normals;
     public ArrayList<Polygon> polygons;
-    public NDimensionalMatrix m;
+    public NDimensionalMatrix affineMatrix;
 
     public Model(ArrayList<ThreeDimensionalVector> vertices,
                  ArrayList<TwoDimensionalVector> textureVertices,
@@ -28,7 +28,7 @@ public class Model {
     public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height){
         triangulate();
         for (Polygon p : polygons){
-            p.drawPolygon(g, modelViewProjectionMatrix, this,m,width,height);
+            p.drawPolygon(g, modelViewProjectionMatrix, this, affineMatrix,width,height);
         }
     }
     public boolean isEmpty() {

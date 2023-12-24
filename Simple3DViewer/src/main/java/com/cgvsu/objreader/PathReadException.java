@@ -7,7 +7,6 @@ public class PathReadException extends Exception {
 
         super("Error in file path, pls check it");
 
-        GuiController.exception("Error, wrong file path");
     }
 
 }

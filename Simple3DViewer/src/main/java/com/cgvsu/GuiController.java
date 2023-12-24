@@ -2,20 +2,18 @@ package com.cgvsu;
 
 import com.cgvsu.Math.AffineTransormation.AffineTransformation;
 import com.cgvsu.Math.Matrix.NDimensionalMatrix;
-import com.cgvsu.Math.Vectors.FourDimensionalVector;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
+import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.MyRenderEngine;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.*;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TabPane;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -26,15 +24,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
-import java.util.*;
 
 
 import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.render_engine.Camera;
-
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
 
 public class GuiController {
 
@@ -45,10 +39,6 @@ public class GuiController {
     public AnchorPane sliderMove;
     public TabPane mainPanel;
 
-    private List<Model> listMesh = new ArrayList<>();
-    private Map<String, Model> loadedModels = new HashMap<>();
-
-
     @FXML
     AnchorPane anchorPane;
 
@@ -56,18 +46,8 @@ public class GuiController {
     private Canvas canvas;
     @FXML
     private Slider sliderTheme;
-
     @FXML
-    private Slider translateX;
-
-    @FXML
-    private TextField textFileTranslateX;
-
-
-    @FXML
-    private ListView<String> listView;
-
-    private List<TextField> list;
+    private ListView<String> listViewModels = new ListView<>();
 
     private Model mesh = null;
     private MyRenderEngine renderEngine;
@@ -87,43 +67,19 @@ public class GuiController {
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
 
-        ObservableList<String> observableList = FXCollections.observableArrayList(loadedModels.keySet());
-        listView.setItems(observableList);
-        listView.setCellFactory(param -> new ListCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item);
-                }
-            }
-        });
-
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(sliderTheme.getValue() - 1);
         canvas.setEffect(colorAdjust);
 
+
         sliderTheme.valueProperty().addListener((observable, oldValue, newValue) -> {
             colorAdjust.setBrightness(newValue.floatValue() - 1);
-            anchorPane.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 1.5) + ","  + (256 - newValue.doubleValue() * 1.5) + ", "  + (256 - newValue.doubleValue() * 1.5) + ")");
-            //  listViewModels.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 1.5) + ","  + (256 - newValue.doubleValue() * 1.5) + ", "  + (256 - newValue.doubleValue() * 1.5) + ")");
+            anchorPane.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
+            listViewModels.setStyle("-fx-background-color:rgb(" + (newValue.doubleValue() * 2.55) + ","  + (newValue.doubleValue() * 2.55) + ", "  + (newValue.doubleValue() * 2.55) + ")");
+            sliderRender.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
+            sliderMove.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
             canvas.setEffect(colorAdjust);
         });
-
-
-//        translateX.valueProperty().addListener(new ChangeListener<Number>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-//                String degrees = String.format(Locale.ENGLISH, "%(.2f", translateX.getValue());
-//                if (degrees.contains("(")) {
-//                    degrees = degrees.substring(1, degrees.length()-1);
-//                    degrees = "-" + degrees;
-//                }
-//                list.get(0).setText(degrees);
-//            }
-//        });
 
         double width = canvas.getWidth();
         double height = canvas.getHeight();
@@ -157,30 +113,18 @@ public class GuiController {
             return;
         }
 
-      //  ObservableList<Model> observableList = FXCollections.observableArrayList(listMesh);
-       // listViewModels.setItems(observableList);
-
         Path fileName = Path.of(file.getAbsolutePath());
 
         try {
             String fileContent = Files.readString(fileName);
-            Model model = ObjReader.read(fileContent);
             mesh = ObjReader.read(fileContent);
-            mesh.m = (NDimensionalMatrix)  new AffineTransformation().translate(20,1,1);
-            renderEngine.addMesh(mesh);
-            loadedModels.put(file.getName(), model);
-
-            for (Map.Entry<String, Model> entry : loadedModels.entrySet()) {
-                String key = entry.getKey();
-                Model value = entry.getValue();
-                System.out.println("Key: " + key + ", Value: " + value);
-            }
+            mesh.affineMatrix = (NDimensionalMatrix)  new AffineTransformation().translate(20,1,1);
+            renderEngine.getLoadedModels().put(fileContent, mesh);
             // todo: обработка ошибок
         } catch (IOException exception) {
 
         }
     }
-
 
     @FXML
     public void handleCameraForward(ActionEvent actionEvent) {
@@ -221,23 +165,14 @@ public class GuiController {
         System.out.println("Клавиша A нажата");
     }
 
-    public static void exception(String text) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Reader Exception");
-        alert.setHeaderText(text);
-        alert.setContentText("Please correct the data.");
-        alert.showAndWait();
+
+    public void onOpenSaveWithChangesModel() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
+        File file = fileChooser.showSaveDialog((Stage) canvas.getScene().getWindow());
+        Model changedModel = new Model(renderEngine.getLoadedModels().get(renderEngine.currentModelName).vertices, renderEngine.getLoadedModels().get(renderEngine.currentModelName).textureVertices, renderEngine.getLoadedModels().get(renderEngine.currentModelName).normals, renderEngine.getLoadedModels().get(renderEngine.currentModelName).polygons);
+
+        // List<String> fileContent2 = ObjWriter.write("newmodel", changedModel);
+        ObjWriter.write("file", changedModel);
     }
-
-
-   // public void onOpenSaveWithChangesModel() {
-     //   FileChooser fileChooser = new FileChooser();
-      //  fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
-      //  File file = fileChooser.showSaveDialog((Stage) canvas.getScene().getWindow());
-      //  try {
-           // Model changedModel = new Model(scene.getLoadedModels().get(scene.currentModelName).modifiedVertices(), scene.getLoadedModels().get(scene.currentModelName).getTextureVertices(), scene.getLoadedModels().get(scene.currentModelName).getNormals(), scene.getLoadedModels().get(scene.currentModelName).getPolygons());
-            //List<String> fileContent2 = ObjWriter.write("newmodel", changedModel);
-          //  ObjWriter.write("file", changedModel);
-       // } catch (IOException ignored) {
-     //   }}
 }
