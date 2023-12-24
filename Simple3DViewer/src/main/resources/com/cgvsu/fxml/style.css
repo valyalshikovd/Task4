@@ -1,0 +1,7 @@
+.tab-pane .tab:selected {
+    -fx-background-color: rgba(89, 131, 89, 0.78);
+}
+
+.tab-pane .tab {
+    -fx-background-color: rgba(150, 94, 94, 0.79);
+}

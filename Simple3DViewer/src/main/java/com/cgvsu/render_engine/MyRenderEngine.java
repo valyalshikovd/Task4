@@ -6,7 +6,9 @@ import com.cgvsu.model.Model;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.cgvsu.render_engine.GraphicConveyor.rotateScaleTranslate;
 
@@ -19,6 +21,9 @@ public class MyRenderEngine {
     private FourDimensionalMatrix viewMatrix;
     private FourDimensionalMatrix projectionMatrix;
     private NDimensionalMatrix modelViewProjectionMatrix;
+
+    private Map<String, Model> loadedModels = new HashMap<>();
+
 
     public List<Model> getListMesh() {
         return listMesh;

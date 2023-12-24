@@ -24,6 +24,7 @@ public class Model {
         this.polygons = polygons;
     }
 
+
     public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height){
         triangulate();
         for (Polygon p : polygons){
@@ -37,5 +38,7 @@ public class Model {
     public void triangulate(){
         polygons = (ArrayList<Polygon>) Triangulation.triangulatePolygons(polygons);
     }
+
+
 
 }
