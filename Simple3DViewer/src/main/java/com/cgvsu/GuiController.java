@@ -13,10 +13,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -48,6 +45,10 @@ public class GuiController {
     public TextField textFieldRotateX;
     public TextField textFieldRotateY;
     public TextField textFieldRotateZ;
+    public TextField textFieldScaleX;
+    public TextField textFieldScaleY;
+    public TextField textFieldScaleZ;
+    public CheckBox triangulationCheckBox;
 
     @FXML
     AnchorPane anchorPane;
@@ -83,8 +84,7 @@ public class GuiController {
         colorAdjust.setBrightness(sliderTheme.getValue() - 1);
         canvas.setEffect(colorAdjust);
 
-        ObservableList<String> items = FXCollections.observableArrayList(
-                "Item 1", "Item 2", "Item 3", "Item 4");
+
 
         listViewModels.setItems(items);
 
@@ -103,13 +103,12 @@ public class GuiController {
         renderEngine = new MyRenderEngine(camera, (int) width, (int) height);
 
 
-        KeyFrame frame = new KeyFrame(Duration.millis(60), event -> {
+        KeyFrame frame = new KeyFrame(Duration.millis(90), event -> {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
             camera.setAspectRatio((float) (width / height));
             renderEngine.setCamera(camera, (int) width, (int) height);
             renderEngine.drawAllMeshes(canvas.getGraphicsContext2D());
-            //System.out.println(renderEngine.getListMesh());
 
         });
 
@@ -174,51 +173,55 @@ public class GuiController {
         camera.movePosition(new ThreeDimensionalVector(0, -TRANSLATION, 0));
     }
 
-    public void handleCameraRightMove(ActionEvent actionEvent) {
-        System.out.println("Клавиша D нажата");
-    }
-
-    public void handleCameraLeftMove(ActionEvent actionEvent) {
-        camera.movePosition(new ThreeDimensionalVector(0, -TRANSLATION, 0));
-        System.out.println("Клавиша A нажата");
-    }
-
-
-    public void onOpenSaveWithChangesModel() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
-        File file = fileChooser.showSaveDialog((Stage) canvas.getScene().getWindow());
-        Model changedModel = new Model(renderEngine.getLoadedModels().get(renderEngine.currentModelName).vertices, renderEngine.getLoadedModels().get(renderEngine.currentModelName).textureVertices, renderEngine.getLoadedModels().get(renderEngine.currentModelName).normals, renderEngine.getLoadedModels().get(renderEngine.currentModelName).polygons);
-
-        // List<String> fileContent2 = ObjWriter.write("newmodel", changedModel);
-        ObjWriter.write("file", changedModel);
-    }
 
     public void handleModelList(MouseEvent mouseEvent) {
         renderEngine.currentModelName = listViewModels.getSelectionModel().getSelectedItems().get(0);
+
+        textFieldTranslationX.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateX));
+        textFieldTranslationY.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateY));
+        textFieldTranslationZ.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateZ));
+
+        textFieldRotateX.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateX));
+        textFieldRotateY.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateY));
+        textFieldRotateZ.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateZ));
+
+        textFieldScaleX.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleX));
+        textFieldScaleY.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleY));
+        textFieldScaleZ.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleZ));
+
     }
 
-    public void handleTextFieldActionXTranslate(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translationMatrix = (NDimensionalMatrix)  new AffineTransformation().translate(Integer.parseInt(textFieldTranslationX.getText()), Integer.parseInt(textFieldTranslationY.getText()) ,Integer.parseInt(textFieldTranslationZ.getText()));
+    public void handleTextFieldActionTranslate(ActionEvent actionEvent) {
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateX  = Integer.parseInt(textFieldTranslationX.getText());
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateY  = Integer.parseInt(textFieldTranslationY.getText());
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateZ  = Integer.parseInt(textFieldTranslationZ.getText());
     }
 
-    public void handleTextFieldActionYTranslate(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translationMatrix = (NDimensionalMatrix)  new AffineTransformation().translate(Integer.parseInt(textFieldTranslationX.getText()), Integer.parseInt(textFieldTranslationY.getText()) ,Integer.parseInt(textFieldTranslationZ.getText()));
+    public void handleRotate(ActionEvent actionEvent) {
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateX  = Double.parseDouble(textFieldRotateX.getText());
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateY  = Double.parseDouble(textFieldRotateY.getText());
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateZ  = Double.parseDouble(textFieldRotateZ.getText());
     }
 
-    public void handleTextFieldActionZTranslate(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translationMatrix = (NDimensionalMatrix)  new AffineTransformation().translate(Integer.parseInt(textFieldTranslationX.getText()), Integer.parseInt(textFieldTranslationY.getText()) ,Integer.parseInt(textFieldTranslationZ.getText()));
+
+    public void handleScale(ActionEvent actionEvent) {
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleX  = Double.parseDouble(textFieldScaleX.getText());
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleY  = Double.parseDouble(textFieldScaleY.getText());
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleZ  = Double.parseDouble(textFieldScaleZ.getText());
     }
 
-    public void handleRotateX(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
+    public void onOpenSaveUnchangedModel() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
+        File file = fileChooser.showSaveDialog((Stage) canvas.getScene().getWindow());
+        String fileName = file.getAbsolutePath();
+        System.out.println(renderEngine.currentModelName);
+        System.out.println(fileName);
+        ObjWriter.write(fileName, renderEngine.getLoadedModels().get(renderEngine.currentModelName));
+
     }
 
-    public void handleRotateY(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
-    }
-
-    public void handleRotateZ(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateMatrix = (NDimensionalMatrix) new AffineTransformation().rotate(Integer.parseInt(textFieldRotateX.getText()), Integer.parseInt(textFieldRotateY.getText()) ,Integer.parseInt(textFieldRotateZ.getText()));
+    public void handleTriangulation(ActionEvent actionEvent) {
+        renderEngine.getLoadedModels().get(renderEngine.currentModelName).isTriangulate = triangulationCheckBox.isSelected();
     }
 }

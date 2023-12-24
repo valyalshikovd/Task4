@@ -13,11 +13,17 @@ public class Model {
     public ArrayList<TwoDimensionalVector> textureVertices;
     public ArrayList<ThreeDimensionalVector> normals;
     public ArrayList<Polygon> polygons;
-    public NDimensionalMatrix affineMatrix;
+    public double scaleX = 1;
+    public double scaleY = 1;
+    public double scaleZ = 1;
+    public int translateX = 1;
+    public int translateY = 1;
+    public int translateZ = 1;
+    public double rotateX = 0;
+    public double rotateY = 0;
+    public double rotateZ = 0;
 
-    public NDimensionalMatrix translationMatrix = (NDimensionalMatrix) new AffineTransformation().translate(1,1,1);
-    public NDimensionalMatrix rotateMatrix = (NDimensionalMatrix) new AffineTransformation().translate(1,1,1);
-
+    public boolean isTriangulate = false;
 
 
     public Model(ArrayList<ThreeDimensionalVector> vertices,
@@ -31,18 +37,24 @@ public class Model {
     }
 
 
-    public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height){
-        triangulate();
-        for (Polygon p : polygons){
-            p.drawPolygon(g, modelViewProjectionMatrix, this, (NDimensionalMatrix) rotateMatrix.multiplyMatrix(translationMatrix),width,height);
+    public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height ){
+        List<Polygon> currPoligons = polygons;
+        if(isTriangulate){
+            currPoligons = triangulate();
+        }
+        for (Polygon p : currPoligons){
+            p.drawPolygon(g, modelViewProjectionMatrix, this, (
+                    (NDimensionalMatrix)new AffineTransformation().scale(scaleX, scaleY, scaleZ).multiplyMatrix(
+                    (NDimensionalMatrix)new AffineTransformation().rotate((float) rotateX, (float) rotateY, (float) rotateZ)).multiplyMatrix(
+                            (NDimensionalMatrix) new AffineTransformation().translate(translateX, translateY, translateZ))),width,height);
         }
     }
     public boolean isEmpty() {
         return vertices.isEmpty();
     }
 
-    public void triangulate(){
-        polygons = (ArrayList<Polygon>) Triangulation.triangulatePolygons(polygons);
+    public ArrayList<Polygon> triangulate(){
+        return (ArrayList<Polygon>) Triangulation.triangulatePolygons(polygons);
     }
 
 

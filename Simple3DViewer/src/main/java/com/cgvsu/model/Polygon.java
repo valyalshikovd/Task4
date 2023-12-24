@@ -66,8 +66,6 @@ public class Polygon {
             resultPoints.add(resultPoint);
         }
 
-
-        //TriangleRasterization.drawTriangle(g, new Triangle((int)resultPoints.get(2).x, (int)resultPoints.get(2).y,(int)resultPoints.get(1).x, (int)resultPoints.get(1).y ,(int)resultPoints.get(0).x, (int)resultPoints.get(0).y));
         for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
             g.strokeLine(
                     resultPoints.get(vertexInPolygonInd - 1).x,

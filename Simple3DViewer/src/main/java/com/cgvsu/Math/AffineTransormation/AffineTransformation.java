@@ -29,7 +29,7 @@ public class AffineTransformation {
 //        {0, sY, 0, 0}
 //        {0, 0, sZ, 0},
 //        {0, 0, 0, 1}
-        return transformationMatrix.multiplyMatrix(scaleMatrix);
+        return scaleMatrix;
     }
     /**
      * Метод для универсального поворота матрицы вокруг осей.
@@ -46,9 +46,9 @@ public class AffineTransformation {
         float sinZ = (float) Math.sin(rZ);
 
         FourDimensionalMatrix rotationMatrix = new FourDimensionalMatrix(
-                new NDimensionalVector(cosY * cosZ,cosY * sinZ ,-sinY, 0),
-                new NDimensionalVector( -cosX * sinZ + sinX * sinY * cosZ,cosX * cosZ + sinX * sinY * sinZ,sinX * cosY, 0 ),
-                new NDimensionalVector(sinX * sinZ + cosX * sinY * cosZ, -sinX * cosZ + cosX * sinY * sinZ, cosX * cosY, 0),
+                new NDimensionalVector(cosY * cosZ,-cosX * sinZ + sinX * sinY * cosZ ,sinX * sinZ + cosX * sinY * cosZ, 0),
+                new NDimensionalVector( cosY * sinZ,cosX * cosZ + sinX * sinY * sinZ,-sinX * cosZ + cosX * sinY * sinZ, 0 ),
+                new NDimensionalVector(-sinY, sinX * cosY, cosX * cosY, 0),
                 new NDimensionalVector(0, 0,0,1)
         );
 
@@ -58,7 +58,7 @@ public class AffineTransformation {
 //        {cosY * sinZ,         cosX * cosZ + sinX * sinY * sinZ,     -sinX * cosZ + cosX * sinY * sinZ,    0},
 //        {-sinY,               sinX * cosY,                          cosX * cosY,                          0},
 //        {0,                   0,                                    0,                                    1}
-        return transformationMatrix.multiplyMatrix(rotationMatrix);
+        return rotationMatrix;
     }
 
     /**
