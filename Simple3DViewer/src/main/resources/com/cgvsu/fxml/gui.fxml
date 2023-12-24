@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="anchorPane" prefHeight="784.0" prefWidth="1485.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgvsu.GuiController">
-    <MenuBar prefHeight="26.0" prefWidth="1299.0">
+    <MenuBar prefHeight="26.0" prefWidth="1485.0">
         <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" onAction="#onOpenModelMenuItemClick" text="Load Model">
             <accelerator>
@@ -59,8 +59,8 @@
         </Menu>
     </MenuBar>
 
-                      <Canvas fx:id="canvas" height="870" width="1600" AnchorPane.topAnchor="30.0" />
-   <TabPane layoutX="1.0" layoutY="588.0" prefHeight="310.0" prefWidth="752.0" tabClosingPolicy="UNAVAILABLE">
+                      <Canvas fx:id="canvas" height="553.0" width="1173.0" AnchorPane.topAnchor="30.0" />
+   <TabPane layoutX="1.0" layoutY="588.0" prefHeight="310.0" prefWidth="752.0" stylesheets="@style.css" tabClosingPolicy="UNAVAILABLE">
      <tabs>
        <Tab text="Terminal">
          <content>
@@ -78,39 +78,36 @@
        </Tab>
      </tabs>
    </TabPane>
-   <TabPane fx:id="mainPanel" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.rightAnchor="10.0">
+   <TabPane fx:id="mainPanel" layoutY="25.0" prefHeight="874.0" prefWidth="300.0" side="LEFT" stylesheets="@style.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.rightAnchor="10.0">
      <tabs>
        <Tab text="Move">
          <content>
            <AnchorPane fx:id="sliderMove" minHeight="0.0" minWidth="0.0" prefHeight="882.0" prefWidth="271.0">
                   <children>
-                     <Label layoutX="91.0" layoutY="14.0" text="Translate">
+                     <Label layoutX="84.0" layoutY="56.0" text="Translate">
                         <font>
                            <Font size="18.0" />
                         </font>
                      </Label>
-                     <Slider layoutX="37.0" layoutY="87.0" majorTickUnit="30.0" max="360.0" min="-360.0" prefHeight="38.0" prefWidth="195.0" showTickLabels="true" showTickMarks="true" />
-                     <TextField layoutX="41.0" layoutY="53.0" prefHeight="26.0" prefWidth="187.0" text="0" />
-                     <Label layoutX="14.0" layoutY="52.0" text="X:">
+                     <TextField fx:id="textFieldTranslationX"  layoutX="40.0" layoutY="103.0" prefHeight="26.0" prefWidth="187.0" text="0" />
+                     <Label layoutX="14.0" layoutY="102.0" text="X:">
                         <font>
                            <Font size="18.0" />
                         </font>
                      </Label>
-                     <Slider layoutX="41.0" layoutY="174.0" majorTickUnit="30.0" max="360.0" min="-360.0" prefHeight="38.0" prefWidth="190.0" showTickLabels="true" showTickMarks="true" />
-                     <TextField layoutX="43.0" layoutY="139.0" prefHeight="26.0" prefWidth="186.0" text="0" />
-                     <Label layoutX="14.0" layoutY="138.0" text="Y:">
+                     <TextField fx:id="textFieldTranslationY" layoutX="43.0" layoutY="176.0" prefHeight="26.0" prefWidth="186.0" text="0" />
+                     <Label layoutX="14.0" layoutY="175.0" text="Y:">
                         <font>
                            <Font size="18.0" />
                         </font>
                      </Label>
-                     <Label layoutX="14.0" layoutY="227.0" text="Z:">
+                     <Label layoutX="14.0" layoutY="239.0" text="Z:">
                         <font>
                            <Font size="18.0" />
                         </font>
                      </Label>
-                     <TextField layoutX="40.0" layoutY="228.0" prefHeight="26.0" prefWidth="192.0" text="0" />
-                     <Slider layoutX="39.0" layoutY="263.0" majorTickUnit="30.0" max="360.0" min="-360.0" prefHeight="14.0" prefWidth="192.0" showTickLabels="true" showTickMarks="true" />
-                     <Label layoutX="115.0" layoutY="310.0" text="Rotate">
+                     <TextField fx:id="textFieldTranslationZ" layoutX="47.0" layoutY="240.0" prefHeight="26.0" prefWidth="186.0" text="0" />
+                     <Label layoutX="93.0" layoutY="295.0" text="Rotate">
                         <font>
                            <Font size="18.0" />
                         </font>
@@ -133,7 +130,7 @@
                            <Font size="18.0" />
                         </font>
                      </Label>
-                     <Label layoutX="120.0" layoutY="515.0" text="Scale">
+                     <Label layoutX="99.0" layoutY="515.0" text="Scale">
                         <font>
                            <Font size="18.0" />
                         </font>
@@ -184,14 +181,14 @@
        </Tab>
          <Tab text="Theme">
            <content>
-             <AnchorPane fx:id="sliderTheme2"  minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+             <AnchorPane fx:id="sliderTheme2" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
                      <Label layoutX="64.0" layoutY="45.0" text="Background theme">
                         <font>
                            <Font size="18.0" />
                         </font>
                      </Label>
-                     <Slider fx:id="sliderTheme" layoutX="66.0" layoutY="109.0" prefHeight="14.0" prefWidth="147.0"/>
+                     <Slider fx:id="sliderTheme" layoutX="66.0" layoutY="109.0" prefHeight="14.0" prefWidth="147.0" />
                      <Label layoutX="34.0" layoutY="107.0" text="Day" />
                      <Label layoutX="218.0" layoutY="107.0" text="Night" />
                   </children>
