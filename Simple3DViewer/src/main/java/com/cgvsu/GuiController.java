@@ -13,8 +13,11 @@ import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -78,23 +81,26 @@ public class GuiController {
 
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
+//
+//        ColorAdjust colorAdjust = new ColorAdjust();
+//        colorAdjust.setBrightness(sliderTheme.getValue() - 1);
+//        canvas.setEffect(colorAdjust);
 
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setBrightness(sliderTheme.getValue() - 1);
-        canvas.setEffect(colorAdjust);
+
+
 
 
 
         listViewModels.setItems(items);
 
-        sliderTheme.valueProperty().addListener((observable, oldValue, newValue) -> {
-            colorAdjust.setBrightness(newValue.floatValue() - 1);
-            anchorPane.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 1.5) + ","  + (256 - newValue.doubleValue() * 1.5) + ", "  + (256 - newValue.doubleValue() * 1.5) + ")");
-            listViewModels.setStyle("-fx-background-color:rgb(" + (newValue.doubleValue() * 2.55) + ","  + (newValue.doubleValue() * 2.55) + ", "  + (newValue.doubleValue() * 2.55) + ")");
-            sliderRender.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
-            sliderMove.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
-            canvas.setEffect(colorAdjust);
-        });
+//        sliderTheme.valueProperty().addListener((observable, oldValue, newValue) -> {
+//            colorAdjust.setBrightness(newValue.floatValue() - 1);
+//            anchorPane.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 1.5) + ","  + (256 - newValue.doubleValue() * 1.5) + ", "  + (256 - newValue.doubleValue() * 1.5) + ")");
+//            listViewModels.setStyle("-fx-background-color:rgb(" + (newValue.doubleValue() * 2.55) + ","  + (newValue.doubleValue() * 2.55) + ", "  + (newValue.doubleValue() * 2.55) + ")");
+//            sliderRender.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
+//            sliderMove.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
+//            canvas.setEffect(colorAdjust);
+//        });
 
         double width = canvas.getWidth();
         double height = canvas.getHeight();
@@ -108,6 +114,15 @@ public class GuiController {
             camera.setAspectRatio((float) (width / height));
             scene.setCamera(camera, (int) width, (int) height);
             scene.drawAllMeshes(canvas.getGraphicsContext2D());
+
+//            canvas.getGraphicsContext2D().getPixelWriter().setColor(100,100, new Color(1.0, 0.0, 0.0, 1.0));
+//            canvas.getGraphicsContext2D().getPixelWriter().setColor(100,101, new Color(1.0, 0.0, 0.0, 1.0));
+//            canvas.getGraphicsContext2D().getPixelWriter().setColor(100,102, new Color(1.0, 0.0, 0.0, 1.0));
+//            canvas.getGraphicsContext2D().getPixelWriter().setColor(101,100, new Color(1.0, 0.0, 0.0, 1.0));
+//            canvas.getGraphicsContext2D().getPixelWriter().setColor(101,101, new Color(1.0, 0.0, 0.0, 1.0));
+//            canvas.getGraphicsContext2D().getPixelWriter().setColor(101,102, new Color(1.0, 0.0, 0.0, 1.0));
+//
+
 
         });
 

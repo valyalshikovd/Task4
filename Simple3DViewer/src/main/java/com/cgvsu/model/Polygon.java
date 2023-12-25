@@ -59,11 +59,13 @@ public class Polygon {
 
 
         ArrayList<Point2f> resultPoints = new ArrayList<>();
+        ArrayList<TwoDimensionalVector> textureVertexes = new ArrayList<>();
         int nVerticesInPolygon = vertexIndices.size();
         for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
             ThreeDimensionalVector vertex =  mesh.vertices.get(vertexIndices.get(vertexInPolygonInd));
             Point2f resultPoint = vertexToPoint(multiplyMatrix4ByVector3(modelViewProjectionMatrix, multiplyMatrix4ByVector3(m, vertex)), width, height);
             resultPoints.add(resultPoint);
+            textureVertexes.add(mesh.textureVertices.get(textureVertexIndices.get(vertexInPolygonInd)));
         }
 
         if(isFill) {
@@ -71,7 +73,8 @@ public class Polygon {
             TriangleRasterization.drawTriangle(g.getPixelWriter(), new TwoDimensionalVector(resultPoints.get(0).x, resultPoints.get(0).y),
                     new TwoDimensionalVector(resultPoints.get(1).x, resultPoints.get(1).y),
                     new TwoDimensionalVector(resultPoints.get(2).x, resultPoints.get(2).y),
-                    Color.BLACK, Color.BLACK, Color.BLACK);
+                    Color.BLACK, Color.BLACK, Color.BLACK,
+                    textureVertexes);
         }else {
         for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
             g.strokeLine(

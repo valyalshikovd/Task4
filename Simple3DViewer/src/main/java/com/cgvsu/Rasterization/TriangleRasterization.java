@@ -7,15 +7,32 @@ import com.cgvsu.Math.Vectors.TwoDimensionalVector;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public class TriangleRasterization {
+
+
+    static File file = new File("C:\\Users\\770vd\\Desktop\\Task4\\Simple3DViewer\\src\\main\\resources\\texture\\NeutralWrapped.jpg");
+    static BufferedImage image;
+
+    static {
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
+     *
      * A comparator used to sort the vertices of a triangle.
      */
-
-    private static final MutableColor color = new MutableColor();
     private static final Comparator<TwoDimensionalVector> COMPARATOR = (a, b) -> {
         int cmp = Double.compare(a.getB(), b.getB());
         if (cmp != 0) {
@@ -37,10 +54,10 @@ public class TriangleRasterization {
      * @param pw The pixel writer.
      * @param trig The triangle to draw.
      */
-    public static void drawTriangle(PixelWriter pw, Triangle trig) {
-        drawTriangle(pw, trig.v1, trig.v2, trig.v3, trig.c1, trig.c2, trig.c3);
-    }
-
+//    public static void drawTriangle(PixelWriter pw, Triangle trig) {
+//        drawTriangle(pw, trig.v1, trig.v2, trig.v3, trig.c1, trig.c2, trig.c3);
+//    }
+    private static final MutableColor color = new MutableColor();
     /**
      * Draws the specified triangle. The order of the vertices is irrelevant.
      * @param pw The pixel writer.
@@ -58,7 +75,8 @@ public class TriangleRasterization {
             final TwoDimensionalVector v3,
             final Color c1,
             final Color c2,
-            final Color c3
+            final Color c3,
+            List<TwoDimensionalVector> texture
     ) {
         // Sort vertices by y.
         final var verts = new TwoDimensionalVector[]{v1, v2, v3};
@@ -72,8 +90,8 @@ public class TriangleRasterization {
 
         // Double the area of the triangle. Used to calculate the barycentric coordinates later.
         final double area = Math.abs(((NDimensionalVector) v1.subtraction(v2)).crossMagnitude((NDimensionalVector)v1.subtraction(v3)));
-        drawTopTriangle(pw, x1, y1, x2, y2, x3, y3, v1, c1, v2, c2, v3, c3, area);
-        drawBottomTriangle(pw, x1, y1, x2, y2, x3, y3, v1, c1, v2, c2, v3, c3, area);
+        drawTopTriangle(pw, x1, y1, x2, y2, x3, y3, v1, c1, v2, c2, v3, c3, area,texture );
+        drawBottomTriangle(pw, x1, y1, x2, y2, x3, y3, v1, c1, v2, c2, v3, c3, area, texture);
     }
 
     /**
@@ -87,9 +105,9 @@ public class TriangleRasterization {
             final TwoDimensionalVector v1, final Color c1,
             final TwoDimensionalVector v2, final Color c2,
             final TwoDimensionalVector v3, final Color c3,
-            final double area
+            final double area, List<TwoDimensionalVector> texture
     ) {
-        System.out.println("рисуем");
+
         final int x2x1 = x2 - x1;
         final int x3x1 = x3 - x1;
         final int y2y1 = y2 - y1;
@@ -105,8 +123,38 @@ public class TriangleRasterization {
                 r = tmp;
             }
             for (int x = l; x <= r; x++) {
-                final int colorBits = interpolateColor(x, y, v1, c1, v2, c2, v3, c3, area);
-                pw.setArgb(x, y, colorBits);
+                final int colorBits = interpolateColor(x, y, v1, c1, v2, c2, v3, c3, area, texture);
+
+
+                p = new TwoDimensionalVector(x, y);
+                final double w1 = Math.abs(((NDimensionalVector)v2.subtraction(p)).crossMagnitude((NDimensionalVector)v2.subtraction(v3))) / area;
+
+                final double w2 = Math.abs(((NDimensionalVector)v1.subtraction(p)).crossMagnitude((NDimensionalVector)v1.subtraction(v3))) / area;
+
+                final double w3 = Math.abs(((NDimensionalVector)v1.subtraction(p)).crossMagnitude((NDimensionalVector)v1.subtraction(v2))) / area;
+
+
+                int PTcoordX = (int) (texture.get(0).getA()*w1 + texture.get(1).getA()*w2 +   texture.get(2).getA()*w3);
+                int PTcoordY = (int) (texture.get(0).getB()*w1 + texture.get(1).getB()*w2 +   texture.get(2).getB()*w3);
+
+
+                try {
+                    int pixelColor = image.getRGB(PTcoordX, PTcoordY);
+
+
+                    // Извлечение компонентов цвета
+                    int alpha = (pixelColor >> 24) & 0xFF;
+                    int red = (pixelColor >> 16) & 0xFF;
+                    int green = (pixelColor >> 8) & 0xFF;
+                    int blue = pixelColor & 0xFF;
+                    // System.out.println(red + " " + green + " " + blue);
+                    //  System.out.println(x + " " + y);
+                    // pw.setArgb(x, y, red | green | blue);
+
+                    pw.setColor(x, y, new Color(alpha / 255.0, red / 255.0, green / 255.0, blue / 255.0));
+                }catch (Exception e){
+                    System.out.println(PTcoordX + " " + PTcoordY);
+                }
             }
         }
     }
@@ -122,7 +170,8 @@ public class TriangleRasterization {
             final TwoDimensionalVector v1, final Color c1,
             final TwoDimensionalVector v2, final Color c2,
             final TwoDimensionalVector v3, final Color c3,
-            final double area
+            final double area,
+            List<TwoDimensionalVector> texture
     ) {
         final int x3x2 = x3 - x2;
         final int x3x1 = x3 - x1;
@@ -139,9 +188,42 @@ public class TriangleRasterization {
                 l = r;
                 r = tmp;
             }
+
+
             for (int x = l; x <= r; x++) {
-                final int colorBits = interpolateColor(x, y, v1, c1, v2, c2, v3, c3, area);
-                pw.setArgb(x, y, colorBits);
+
+
+
+                   // final int colorBits = interpolateColor(x, y, v1, c1, v2, c2, v3, c3, area, texture);
+
+
+                    p = new TwoDimensionalVector(x, y);
+                    final double w1 = Math.abs(((NDimensionalVector) v2.subtraction(p)).crossMagnitude((NDimensionalVector) v2.subtraction(v3))) / area;
+
+                    final double w2 = Math.abs(((NDimensionalVector) v1.subtraction(p)).crossMagnitude((NDimensionalVector) v1.subtraction(v3))) / area;
+
+                    final double w3 = Math.abs(((NDimensionalVector) v1.subtraction(p)).crossMagnitude((NDimensionalVector) v1.subtraction(v2))) / area;
+
+
+                    int PTcoordX = (int) (texture.get(0).getA() * w1 + texture.get(1).getA() * w2 + +texture.get(2).getA() * w3);
+                    int PTcoordY = (int) (texture.get(0).getB() * w1 + texture.get(1).getB() * w2 + +texture.get(2).getB() * w3);
+
+                try {
+                    int pixelColor = image.getRGB(PTcoordX, PTcoordY);
+
+                    // Извлечение компонентов цвета
+                    int alpha = (pixelColor >> 24) & 0xFF;
+                    int red = (pixelColor >> 16) & 0xFF;
+                    int green = (pixelColor >> 8) & 0xFF;
+                    int blue = pixelColor & 0xFF;
+
+                   pw.setColor(x,y,new Color(alpha/255.0, red/255.0, green/255.0, blue/255.0));
+
+
+                  //  pw.setArgb(x, y, red | green | blue);
+                }catch (Exception e){
+                    System.out.println(PTcoordX + " " + PTcoordY);
+                }
             }
         }
     }
@@ -155,7 +237,8 @@ public class TriangleRasterization {
             final TwoDimensionalVector v1, final Color c1,
             final TwoDimensionalVector v2, final Color c2,
             final TwoDimensionalVector v3, final Color c3,
-            final double area
+            final double area,
+            List<TwoDimensionalVector> texture
     ) {
         p = new TwoDimensionalVector(x, y);
         final double w1 = Math.abs(((NDimensionalVector)v2.subtraction(p)).crossMagnitude((NDimensionalVector)v2.subtraction(v3))) / area;
@@ -167,9 +250,17 @@ public class TriangleRasterization {
 //        final float w2 = Math.abs(v1.to(p).crossMagnitude(v1.to(v3))) / area;
 //        final float w3 = Math.abs(v1.to(p).crossMagnitude(v1.to(v2))) / area;
 
+
+        double PTcoordX = texture.get(0).getA()*w1 + texture.get(1).getA()*w2 +  + texture.get(2).getA()*w3;
+        double PTcoordY = texture.get(0).getB()*w1 + texture.get(1).getB()*w2 +  + texture.get(2).getB()*w3;
+
         final float red = clamp((float) (w1 * c1.getRed() + w2 * c2.getRed() + w3 * c3.getRed()));
         final float green = clamp((float) (w1 * c1.getGreen() + w2 * c2.getGreen() + w3 * c3.getGreen()));
         final float blue = clamp((float) (w1 * c1.getBlue() + w2 * c2.getBlue() + w3 * c3.getBlue()));
+
+        for(TwoDimensionalVector t : texture){
+
+        }
 
         color.set(red, green, blue);
         return color.toArgb();
