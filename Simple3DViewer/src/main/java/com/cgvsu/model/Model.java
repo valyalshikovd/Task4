@@ -25,6 +25,8 @@ public class Model {
 
     public boolean isTriangulate = false;
 
+    public  boolean isFill = false;
+
 
     public Model(ArrayList<ThreeDimensionalVector> vertices,
                  ArrayList<TwoDimensionalVector> textureVertices,
@@ -39,14 +41,14 @@ public class Model {
 
     public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height ){
         List<Polygon> currPoligons = polygons;
-        if(isTriangulate){
+        if(isTriangulate || isFill){
             currPoligons = triangulate();
         }
         for (Polygon p : currPoligons){
             p.drawPolygon(g, modelViewProjectionMatrix, this, (
                     (NDimensionalMatrix)new AffineTransformation().scale(scaleX, scaleY, scaleZ).multiplyMatrix(
                     (NDimensionalMatrix)new AffineTransformation().rotate((float) rotateX, (float) rotateY, (float) rotateZ)).multiplyMatrix(
-                            (NDimensionalMatrix) new AffineTransformation().translate(translateX, translateY, translateZ))),width,height);
+                            (NDimensionalMatrix) new AffineTransformation().translate(translateX, translateY, translateZ))),width,height,isFill);
         }
     }
     public boolean isEmpty() {

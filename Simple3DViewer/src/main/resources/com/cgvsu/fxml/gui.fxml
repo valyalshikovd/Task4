@@ -163,7 +163,7 @@
                 <content>
                     <AnchorPane fx:id="sliderRender" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                         <children>
-                            <CheckBox layoutX="46.0" layoutY="101.0" mnemonicParsing="false" text="Fill">
+                            <CheckBox fx:id="fillCheckBox" layoutX="46.0" layoutY="101.0" mnemonicParsing="false" text="Fill" onAction="#handleFill">
                                 <font>
                                     <Font size="18.0" />
                                 </font>

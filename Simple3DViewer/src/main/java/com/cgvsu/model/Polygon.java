@@ -3,7 +3,9 @@ package com.cgvsu.model;
 import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Math.Vectors.TwoDimensionalVector;
+import com.cgvsu.Rasterization.TriangleRasterization;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 import javax.vecmath.Point2f;
 import java.util.ArrayList;
@@ -53,19 +55,24 @@ public class Polygon {
         return normalIndices;
     }
 
-    public void drawPolygon(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, Model mesh, NDimensionalMatrix m, int width, int height){
+    public void drawPolygon(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, Model mesh, NDimensionalMatrix m, int width, int height, boolean isFill){
 
 
         ArrayList<Point2f> resultPoints = new ArrayList<>();
-        ArrayList<TwoDimensionalVector>  resVectors = new ArrayList<>();
         int nVerticesInPolygon = vertexIndices.size();
         for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
             ThreeDimensionalVector vertex =  mesh.vertices.get(vertexIndices.get(vertexInPolygonInd));
-            resVectors.add(new TwoDimensionalVector(vertex.getA(), vertex.getB()));
             Point2f resultPoint = vertexToPoint(multiplyMatrix4ByVector3(modelViewProjectionMatrix, multiplyMatrix4ByVector3(m, vertex)), width, height);
             resultPoints.add(resultPoint);
         }
 
+        if(isFill) {
+
+            TriangleRasterization.drawTriangle(g.getPixelWriter(), new TwoDimensionalVector(resultPoints.get(0).x, resultPoints.get(0).y),
+                    new TwoDimensionalVector(resultPoints.get(1).x, resultPoints.get(1).y),
+                    new TwoDimensionalVector(resultPoints.get(2).x, resultPoints.get(2).y),
+                    Color.BLACK, Color.BLACK, Color.BLACK);
+        }else {
         for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
             g.strokeLine(
                     resultPoints.get(vertexInPolygonInd - 1).x,
@@ -79,6 +86,7 @@ public class Polygon {
                     resultPoints.get(nVerticesInPolygon - 1).y,
                     resultPoints.get(0).x,
                     resultPoints.get(0).y);
+        }
     }
     public static ThreeDimensionalVector multiplyMatrix4ByVector3(final NDimensionalMatrix matrix, final ThreeDimensionalVector vertex) {
         final double x  = matrix.getMatrixInVectors()[0].getArrValues()[0] * vertex.getA() +  matrix.getMatrixInVectors()[1].getArrValues()[0] * vertex.getB() + matrix.getMatrixInVectors()[2].getArrValues()[0] * vertex.getC() + matrix.getMatrixInVectors()[3].getArrValues()[0];

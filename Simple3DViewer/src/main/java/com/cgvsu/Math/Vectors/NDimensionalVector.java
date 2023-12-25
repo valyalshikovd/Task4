@@ -126,4 +126,7 @@ public class NDimensionalVector implements Vector{
             }
         }
     }
+    public double crossMagnitude(NDimensionalVector vector){
+        return this.getArrValues()[0] * vector.getArrValues()[1] - this.getArrValues()[1] * vector.getArrValues()[0];
+    }
 }

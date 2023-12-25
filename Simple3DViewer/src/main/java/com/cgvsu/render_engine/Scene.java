@@ -1,22 +1,17 @@
 package com.cgvsu.render_engine;
 
-import com.cgvsu.Math.AffineTransormation.AffineTransformation;
 import com.cgvsu.Math.Matrix.FourDimensionalMatrix;
 import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.model.Model;
-import com.cgvsu.objreader.ObjReader;
 import javafx.scene.canvas.GraphicsContext;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.cgvsu.render_engine.GraphicConveyor.rotateScaleTranslate;
 
-public class MyRenderEngine {
+public class Scene {
     private Camera camera;
 
     private int width;
@@ -31,7 +26,7 @@ public class MyRenderEngine {
 
 
 
-    public MyRenderEngine(Camera camera, int width, int height) {
+    public Scene(Camera camera, int width, int height) {
         this.camera = camera;
         this.width = width;
         this.height = height;

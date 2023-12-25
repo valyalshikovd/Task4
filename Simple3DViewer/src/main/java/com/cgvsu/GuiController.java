@@ -1,10 +1,8 @@
 package com.cgvsu;
 
-import com.cgvsu.Math.AffineTransormation.AffineTransformation;
-import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.objwriter.ObjWriter;
-import com.cgvsu.render_engine.MyRenderEngine;
+import com.cgvsu.render_engine.Scene;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -49,6 +47,7 @@ public class GuiController {
     public TextField textFieldScaleY;
     public TextField textFieldScaleZ;
     public CheckBox triangulationCheckBox;
+    public CheckBox fillCheckBox;
 
     @FXML
     AnchorPane anchorPane;
@@ -61,7 +60,7 @@ public class GuiController {
     private ListView<String> listViewModels = new ListView<>();
 
     private Model mesh = null;
-    private MyRenderEngine renderEngine;
+    private Scene scene;
 
     private ObservableList<String> items = FXCollections.observableArrayList();
 
@@ -90,7 +89,7 @@ public class GuiController {
 
         sliderTheme.valueProperty().addListener((observable, oldValue, newValue) -> {
             colorAdjust.setBrightness(newValue.floatValue() - 1);
-            anchorPane.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
+            anchorPane.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 1.5) + ","  + (256 - newValue.doubleValue() * 1.5) + ", "  + (256 - newValue.doubleValue() * 1.5) + ")");
             listViewModels.setStyle("-fx-background-color:rgb(" + (newValue.doubleValue() * 2.55) + ","  + (newValue.doubleValue() * 2.55) + ", "  + (newValue.doubleValue() * 2.55) + ")");
             sliderRender.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
             sliderMove.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
@@ -100,15 +99,15 @@ public class GuiController {
         double width = canvas.getWidth();
         double height = canvas.getHeight();
 
-        renderEngine = new MyRenderEngine(camera, (int) width, (int) height);
+        scene = new Scene(camera, (int) width, (int) height);
 
 
         KeyFrame frame = new KeyFrame(Duration.millis(90), event -> {
 
-            canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
+            canvas.getGraphicsContext2D().clearRect(0, 0, width , height);
             camera.setAspectRatio((float) (width / height));
-            renderEngine.setCamera(camera, (int) width, (int) height);
-            renderEngine.drawAllMeshes(canvas.getGraphicsContext2D());
+            scene.setCamera(camera, (int) width, (int) height);
+            scene.drawAllMeshes(canvas.getGraphicsContext2D());
 
         });
 
@@ -134,7 +133,7 @@ public class GuiController {
         try {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
-            renderEngine.getLoadedModels().put(fileName.toString(), mesh);
+            scene.getLoadedModels().put(fileName.toString(), mesh);
             items.add(fileName.toString());
             listViewModels.setItems(items);
             // todo: обработка ошибок
@@ -175,39 +174,39 @@ public class GuiController {
 
 
     public void handleModelList(MouseEvent mouseEvent) {
-        renderEngine.currentModelName = listViewModels.getSelectionModel().getSelectedItems().get(0);
+        scene.currentModelName = listViewModels.getSelectionModel().getSelectedItems().get(0);
 
-        textFieldTranslationX.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateX));
-        textFieldTranslationY.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateY));
-        textFieldTranslationZ.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateZ));
+        textFieldTranslationX.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).translateX));
+        textFieldTranslationY.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).translateY));
+        textFieldTranslationZ.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).translateZ));
 
-        textFieldRotateX.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateX));
-        textFieldRotateY.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateY));
-        textFieldRotateZ.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateZ));
+        textFieldRotateX.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).rotateX));
+        textFieldRotateY.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).rotateY));
+        textFieldRotateZ.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).rotateZ));
 
-        textFieldScaleX.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleX));
-        textFieldScaleY.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleY));
-        textFieldScaleZ.setText(String.valueOf(renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleZ));
+        textFieldScaleX.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).scaleX));
+        textFieldScaleY.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).scaleY));
+        textFieldScaleZ.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).scaleZ));
 
     }
 
     public void handleTextFieldActionTranslate(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateX  = Integer.parseInt(textFieldTranslationX.getText());
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateY  = Integer.parseInt(textFieldTranslationY.getText());
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).translateZ  = Integer.parseInt(textFieldTranslationZ.getText());
+        scene.getLoadedModels().get(scene.currentModelName).translateX  = Integer.parseInt(textFieldTranslationX.getText());
+        scene.getLoadedModels().get(scene.currentModelName).translateY  = Integer.parseInt(textFieldTranslationY.getText());
+        scene.getLoadedModels().get(scene.currentModelName).translateZ  = Integer.parseInt(textFieldTranslationZ.getText());
     }
 
     public void handleRotate(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateX  = Double.parseDouble(textFieldRotateX.getText());
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateY  = Double.parseDouble(textFieldRotateY.getText());
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).rotateZ  = Double.parseDouble(textFieldRotateZ.getText());
+        scene.getLoadedModels().get(scene.currentModelName).rotateX  = Double.parseDouble(textFieldRotateX.getText());
+        scene.getLoadedModels().get(scene.currentModelName).rotateY  = Double.parseDouble(textFieldRotateY.getText());
+        scene.getLoadedModels().get(scene.currentModelName).rotateZ  = Double.parseDouble(textFieldRotateZ.getText());
     }
 
 
     public void handleScale(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleX  = Double.parseDouble(textFieldScaleX.getText());
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleY  = Double.parseDouble(textFieldScaleY.getText());
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).scaleZ  = Double.parseDouble(textFieldScaleZ.getText());
+        scene.getLoadedModels().get(scene.currentModelName).scaleX  = Double.parseDouble(textFieldScaleX.getText());
+        scene.getLoadedModels().get(scene.currentModelName).scaleY  = Double.parseDouble(textFieldScaleY.getText());
+        scene.getLoadedModels().get(scene.currentModelName).scaleZ  = Double.parseDouble(textFieldScaleZ.getText());
     }
 
     public void onOpenSaveUnchangedModel() {
@@ -215,13 +214,17 @@ public class GuiController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
         File file = fileChooser.showSaveDialog((Stage) canvas.getScene().getWindow());
         String fileName = file.getAbsolutePath();
-        System.out.println(renderEngine.currentModelName);
+        System.out.println(scene.currentModelName);
         System.out.println(fileName);
-        ObjWriter.write(fileName, renderEngine.getLoadedModels().get(renderEngine.currentModelName));
+        ObjWriter.write(fileName, scene.getLoadedModels().get(scene.currentModelName));
 
     }
 
     public void handleTriangulation(ActionEvent actionEvent) {
-        renderEngine.getLoadedModels().get(renderEngine.currentModelName).isTriangulate = triangulationCheckBox.isSelected();
+        scene.getLoadedModels().get(scene.currentModelName).isTriangulate = triangulationCheckBox.isSelected();
+    }
+
+    public void handleFill(ActionEvent actionEvent) {
+        scene.getLoadedModels().get(scene.currentModelName).isFill = fillCheckBox.isSelected();
     }
 }
