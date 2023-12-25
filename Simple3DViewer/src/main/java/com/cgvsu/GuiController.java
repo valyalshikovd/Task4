@@ -232,4 +232,12 @@ public class GuiController {
         System.out.println(selectedColor);
         scene.getLoadedModels().get(scene.currentModelName).isFill = selectedColor;
     }
+
+    public static void exception(String text) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Reader Exception");
+        alert.setHeaderText(text);
+        alert.setContentText("Please correct the data.");
+        alert.showAndWait();
+    }
 }
