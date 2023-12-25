@@ -12,6 +12,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -19,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
@@ -48,6 +50,7 @@ public class GuiController {
     public TextField textFieldScaleZ;
     public CheckBox triangulationCheckBox;
     public CheckBox fillCheckBox;
+    public ColorPicker colorpick;
 
     @FXML
     AnchorPane anchorPane;
@@ -225,6 +228,8 @@ public class GuiController {
     }
 
     public void handleFill(ActionEvent actionEvent) {
-        scene.getLoadedModels().get(scene.currentModelName).isFill = fillCheckBox.isSelected();
+        javafx.scene.paint.Color selectedColor = colorpick.getValue();
+        System.out.println(selectedColor);
+        scene.getLoadedModels().get(scene.currentModelName).isFill = selectedColor;
     }
 }

@@ -55,7 +55,7 @@ public class Polygon {
         return normalIndices;
     }
 
-    public void drawPolygon(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, Model mesh, NDimensionalMatrix m, int width, int height, boolean isFill){
+    public void drawPolygon(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, Model mesh, NDimensionalMatrix m, int width, int height, Color isFill){
 
 
         ArrayList<Point2f> resultPoints = new ArrayList<>();
@@ -66,12 +66,12 @@ public class Polygon {
             resultPoints.add(resultPoint);
         }
 
-        if(isFill) {
+        if(isFill != Color.WHITE) {
 
             TriangleRasterization.drawTriangle(g.getPixelWriter(), new TwoDimensionalVector(resultPoints.get(0).x, resultPoints.get(0).y),
                     new TwoDimensionalVector(resultPoints.get(1).x, resultPoints.get(1).y),
                     new TwoDimensionalVector(resultPoints.get(2).x, resultPoints.get(2).y),
-                    Color.BLACK, Color.BLACK, Color.BLACK);
+                    isFill, isFill, isFill);
         }else {
         for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
             g.strokeLine(

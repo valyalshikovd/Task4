@@ -89,7 +89,6 @@ public class TriangleRasterization {
             final TwoDimensionalVector v3, final Color c3,
             final double area
     ) {
-        System.out.println("рисуем");
         final int x2x1 = x2 - x1;
         final int x3x1 = x3 - x1;
         final int y2y1 = y2 - y1;
