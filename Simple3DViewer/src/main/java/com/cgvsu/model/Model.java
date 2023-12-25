@@ -4,9 +4,12 @@ import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Math.Vectors.TwoDimensionalVector;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Model {
     public ArrayList<ThreeDimensionalVector> vertices;
@@ -25,7 +28,7 @@ public class Model {
 
     public boolean isTriangulate = false;
 
-    public  boolean isFill = false;
+    public Color isFill = Color.WHITE;
 
 
     public Model(ArrayList<ThreeDimensionalVector> vertices,
@@ -41,7 +44,7 @@ public class Model {
 
     public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height ){
         List<Polygon> currPoligons = polygons;
-        if(isTriangulate || isFill){
+        if(isTriangulate || isFill != Color.WHITE){
             currPoligons = triangulate();
         }
         for (Polygon p : currPoligons){
