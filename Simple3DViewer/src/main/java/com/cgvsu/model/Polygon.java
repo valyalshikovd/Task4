@@ -55,47 +55,59 @@ public class Polygon {
         return normalIndices;
     }
 
-    public void drawPolygon(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, Model mesh, NDimensionalMatrix m, int width, int height, Color isFill, ThreeDimensionalVector light){
+    public void drawPolygon(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, Model mesh, NDimensionalMatrix m, int width, int height, Color isFill, ThreeDimensionalVector light, double[][] Zbuffer){
 
 
-        ArrayList<Point2f> resultPoints = new ArrayList<>();
+        ArrayList<ThreeDimensionalVector> resultPoints = new ArrayList<>();
         ArrayList<TwoDimensionalVector> textureVertexes = new ArrayList<>();
         int nVerticesInPolygon = vertexIndices.size();
 
-        System.out.println(mesh.normals.size());
-        double lightCoeff  = -mesh.normals.get(normalIndices.get(1)).scalarProduct(light);
+
+        ArrayList<ThreeDimensionalVector> vectors = new ArrayList<>();
+        for(Integer vert : vertexIndices){
+            vectors.add(mesh.vertices.get(vert));
+        }
+        double lightCoeff  = -NormalUtils.normalPolygon(this, mesh.vertices).scalarProduct(mesh.vertices.get(this.vertexIndices.get(0)).subtraction(light));
         if(lightCoeff < 0){
             lightCoeff =0;
-            System.out.println(lightCoeff);
         }
+        if(lightCoeff > 1){
+            lightCoeff = 1;
+        }
+     //   System.out.println(lightCoeff);
         for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
             ThreeDimensionalVector vertex =  mesh.vertices.get(vertexIndices.get(vertexInPolygonInd));
-            Point2f resultPoint = vertexToPoint(multiplyMatrix4ByVector3(modelViewProjectionMatrix, multiplyMatrix4ByVector3(m, vertex)), width, height);
-            resultPoints.add(resultPoint);
+            vertex = multiplyMatrix4ByVector3(modelViewProjectionMatrix, multiplyMatrix4ByVector3(m, vertex));
+            Point2f resultPoint = vertexToPoint(vertex, width, height);
+            resultPoints.add(new ThreeDimensionalVector(resultPoint.x, resultPoint.y, vertex.getC()));
             textureVertexes.add(mesh.textureVertices.get(textureVertexIndices.get(vertexInPolygonInd)));
         }
 
         if( isFill != Color.WHITE) {
 
-            TriangleRasterization.drawTriangle(g.getPixelWriter(), new TwoDimensionalVector(resultPoints.get(0).x, resultPoints.get(0).y),
-                    new TwoDimensionalVector(resultPoints.get(1).x, resultPoints.get(1).y),
-                    new TwoDimensionalVector(resultPoints.get(2).x, resultPoints.get(2).y),
+
+
+
+            TriangleRasterization.drawTriangle(g.getPixelWriter(),
+                    new ThreeDimensionalVector(resultPoints.get(0).getA(), resultPoints.get(0).getB(), resultPoints.get(0).getC()),
+                    new ThreeDimensionalVector(resultPoints.get(1).getA(), resultPoints.get(1).getB(), resultPoints.get(1).getC()),
+                    new ThreeDimensionalVector(resultPoints.get(2).getA(), resultPoints.get(2).getB(), resultPoints.get(2).getC()),
                     isFill,
-                    textureVertexes);
+                    textureVertexes, lightCoeff, Zbuffer);
         }else {
         for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
             g.strokeLine(
-                    resultPoints.get(vertexInPolygonInd - 1).x,
-                    resultPoints.get(vertexInPolygonInd - 1).y,
-                    resultPoints.get(vertexInPolygonInd).x,
-                    resultPoints.get(vertexInPolygonInd).y);
+                    resultPoints.get(vertexInPolygonInd - 1).getA(),
+                    resultPoints.get(vertexInPolygonInd - 1).getB(),
+                    resultPoints.get(vertexInPolygonInd).getA(),
+                    resultPoints.get(vertexInPolygonInd).getB());
         }
         if (nVerticesInPolygon> 0)
             g.strokeLine(
-                    resultPoints.get(nVerticesInPolygon - 1).x,
-                    resultPoints.get(nVerticesInPolygon - 1).y,
-                    resultPoints.get(0).x,
-                    resultPoints.get(0).y);
+                    resultPoints.get(nVerticesInPolygon - 1).getA(),
+                    resultPoints.get(nVerticesInPolygon - 1).getB(),
+                    resultPoints.get(0).getA(),
+                    resultPoints.get(0).getB());
         }
     }
     public static ThreeDimensionalVector multiplyMatrix4ByVector3(final NDimensionalMatrix matrix, final ThreeDimensionalVector vertex) {

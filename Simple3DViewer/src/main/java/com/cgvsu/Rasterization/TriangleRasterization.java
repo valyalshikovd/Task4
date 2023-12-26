@@ -3,6 +3,7 @@ package com.cgvsu.Rasterization;
 
 import com.cgvsu.Math.Figure.Triangle;
 import com.cgvsu.Math.Vectors.NDimensionalVector;
+import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Math.Vectors.TwoDimensionalVector;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
@@ -33,7 +34,7 @@ public class TriangleRasterization {
      *
      * A comparator used to sort the vertices of a triangle.
      */
-    private static final Comparator<TwoDimensionalVector> COMPARATOR = (a, b) -> {
+    private static final Comparator<ThreeDimensionalVector> COMPARATOR = (a, b) -> {
         int cmp = Double.compare(a.getB(), b.getB());
         if (cmp != 0) {
             return cmp;
@@ -60,14 +61,16 @@ public class TriangleRasterization {
 
     public static void drawTriangle(
             final PixelWriter pw,
-            final TwoDimensionalVector v1,
-            final TwoDimensionalVector v2,
-            final TwoDimensionalVector v3,
+            final ThreeDimensionalVector v1,
+            final ThreeDimensionalVector v2,
+            final ThreeDimensionalVector v3,
             final Color color,
-            List<TwoDimensionalVector> texture
+            List<TwoDimensionalVector> texture,
+            double light,
+            double[][] Zbuffer
     ) {
         // Sort vertices by y.
-        final var verts = new TwoDimensionalVector[]{v1, v2, v3};
+        final var verts = new ThreeDimensionalVector[]{v1, v2, v3};
         Arrays.sort(verts, COMPARATOR);
         final int x1 = (int) verts[0].getA();
         final int x2 = (int) verts[1].getA();
@@ -78,8 +81,8 @@ public class TriangleRasterization {
 
         // Double the area of the triangle. Used to calculate the barycentric coordinates later.
         final double area = Math.abs(((NDimensionalVector) v1.subtraction(v2)).crossMagnitude((NDimensionalVector)v1.subtraction(v3)));
-        drawTopTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3,  area,texture );
-        drawBottomTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture);
+        drawTopTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3,  area,texture , light, Zbuffer);
+        drawBottomTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, light, Zbuffer);
     }
 
     /**
@@ -90,10 +93,10 @@ public class TriangleRasterization {
             final int x1, final int y1,
             final int x2, final int y2,
             final int x3, final int y3,
-            final TwoDimensionalVector v1, final Color color,
-            final TwoDimensionalVector v2,
-            final TwoDimensionalVector v3,
-            final double area, List<TwoDimensionalVector> texture
+            final ThreeDimensionalVector v1, final Color color,
+            final ThreeDimensionalVector v2,
+            final ThreeDimensionalVector v3,
+            final double area, List<TwoDimensionalVector> texture, double light, double[][] Zbuffer
     ) {
 
         final int x2x1 = x2 - x1;
@@ -111,7 +114,18 @@ public class TriangleRasterization {
                 r = tmp;
             }
             for (int x = l; x <= r; x++) {
-                pw.setColor(x, y, color);
+
+                try {
+
+                    if(Zbuffer[x][y] > v1.getC()){
+                        pw.setColor(x, y, new Color(1 * light, 0, 0, 1));
+                        Zbuffer[x][y] = v1.getC();
+                    }
+
+
+                }catch (Exception e){
+                    //System.out.println(light);
+                }
 //                final int colorBits = interpolateColor(x, y, v1, c1, v2, c2, v3, c3, area, texture);
 //
 //
@@ -156,11 +170,11 @@ public class TriangleRasterization {
             final int x1, final int y1,
             final int x2, final int y2,
             final int x3, final int y3,
-            final TwoDimensionalVector v1, final Color color,
-            final TwoDimensionalVector v2,
-            final TwoDimensionalVector v3,
+            final ThreeDimensionalVector v1, final Color color,
+            final ThreeDimensionalVector v2,
+            final ThreeDimensionalVector v3,
             final double area,
-            List<TwoDimensionalVector> texture
+            List<TwoDimensionalVector> texture, double light,double[][] Zbuffer
     ) {
         final int x3x2 = x3 - x2;
         final int x3x1 = x3 - x1;
@@ -206,9 +220,16 @@ public class TriangleRasterization {
 //                    int green = (pixelColor >> 8) & 0xFF;
 //                    int blue = pixelColor & 0xFF;
 
-                   pw.setColor(x,y,color);
+                try {
 
+                    if(Zbuffer[x][y] > v1.getC()){
+                        pw.setColor(x, y, new Color(1 * light, 0, 0, 1));
+                        Zbuffer[x][y] = v1.getC();
+                    }
 
+                }catch (Exception e){
+                    //System.out.println(light);
+                }
                   //  pw.setArgb(x, y, red | green | blue);
 //                }catch (Exception e){
 //                    System.out.println(PTcoordX + " " + PTcoordY);

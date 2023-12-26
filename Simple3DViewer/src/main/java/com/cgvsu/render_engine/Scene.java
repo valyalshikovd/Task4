@@ -26,7 +26,9 @@ public class Scene {
     private Map<String, Model> loadedModels = new HashMap<>();
 
 
-    private ThreeDimensionalVector light = new ThreeDimensionalVector(1,1,0);
+    private ThreeDimensionalVector light = new ThreeDimensionalVector(30,10,1);
+
+    private double[][] Zbuffer;
 
 
 
@@ -34,6 +36,10 @@ public class Scene {
         this.camera = camera;
         this.width = width;
         this.height = height;
+
+        this.Zbuffer = new double[width][height];
+
+
 
         this.modelMatrix = rotateScaleTranslate();
         this.viewMatrix = camera.getViewMatrix();
@@ -84,8 +90,16 @@ public class Scene {
 
 
     public void drawAllMeshes(GraphicsContext g) {
+        for(int i = 0; i< width; i++){
+            for(int j = 0; j< height; j++){
+
+                this.Zbuffer[i][j] = Double.MAX_VALUE;
+
+            }
+        }
+
         for (String model : loadedModels.keySet()) {
-            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, light);
+            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, light, Zbuffer);
         }
     }
 

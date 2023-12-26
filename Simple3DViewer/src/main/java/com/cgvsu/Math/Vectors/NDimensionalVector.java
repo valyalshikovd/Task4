@@ -129,4 +129,17 @@ public class NDimensionalVector implements Vector{
     public double crossMagnitude(NDimensionalVector vector){
         return this.getArrValues()[0] * vector.getArrValues()[1] - this.getArrValues()[1] * vector.getArrValues()[0];
     }
+
+    public ThreeDimensionalVector vectorProduct(NDimensionalVector vector){
+        if(this.dimensional != 3){
+            throw new ArithmeticException("Неправильная размерность");
+        }
+        if(vector.dimensional != 3){
+            throw new ArithmeticException("Неправильная размерность");
+        }
+
+        return  new ThreeDimensionalVector(this.getArrValues()[0], this.getArrValues()[1], this.getArrValues()[2]).vectorProduct(
+                new ThreeDimensionalVector(vector.getArrValues()[0], vector.getArrValues()[1], vector.getArrValues()[2])
+        );
+    }
 }

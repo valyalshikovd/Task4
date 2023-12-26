@@ -1,29 +1,34 @@
 package com.cgvsu.model;
 
-import com.cgvsu.math.Vector3f;
-import com.cgvsu.math.VectorOperations;
+import com.cgvsu.Math.Vectors.NDimensionalVector;
+import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
+import com.cgvsu.Math.Vectors.Vector;
+
 
 import java.util.ArrayList;
 
 public class NormalUtils {
 
-    private static Vector3f normalPolygon(Polygon polygon, ArrayList<Vector3f> vertices) {
+    public static ThreeDimensionalVector normalPolygon(Polygon polygon, ArrayList<ThreeDimensionalVector> vertices) {
         ArrayList<Integer> vertexIndices = polygon.getVertexIndices();
         try {
-            return VectorOperations.vectorProduct(VectorOperations.vector(vertices.get(vertexIndices.get(0)), vertices.get(vertexIndices.get(1))),
-                    VectorOperations.vector(vertices.get(vertexIndices.get(0)), vertices.get(vertexIndices.get(2))));
+            return ((NDimensionalVector)vertices.get(vertexIndices.get(1))
+                            .subtraction(vertices.get(vertexIndices.get(0))))
+                    .vectorProduct(
+                    (NDimensionalVector) vertices.get(vertexIndices.get(2))
+                            .subtraction(vertices.get(vertexIndices.get(0))));
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("известно менее 3 вершин (у полигона)");
+            System.out.println("известно менее 3 вершин(у полигона)");
         }
         return null;
     }
 
-    public static ArrayList<Vector3f> normalsVertex(ArrayList<Vector3f> vertices, ArrayList<Polygon> polygons) {
-        ArrayList<Vector3f> normalsVertex = new ArrayList<Vector3f>();
-        ArrayList<Vector3f> normalsPolygon = new ArrayList<Vector3f>();
+    public static ArrayList<Vector> normalsVertex(ArrayList<ThreeDimensionalVector> vertices, ArrayList<Polygon> polygons) {
+        ArrayList<Vector> normalsVertex = new ArrayList<Vector>();
+        ArrayList<Vector> normalsPolygon = new ArrayList<Vector>();
 
         Integer[] count = new Integer[vertices.size()];
-        Vector3f[] normalSummaVertex = new Vector3f[vertices.size()];
+        NDimensionalVector[] normalSummaVertex = new NDimensionalVector[vertices.size()];
 
         for (int indexPoligon = 0; indexPoligon < polygons.size(); indexPoligon++) {
             normalsPolygon.add(indexPoligon, normalPolygon(polygons.get(indexPoligon), vertices));
@@ -33,17 +38,17 @@ public class NormalUtils {
 
             for (Integer vertexIndex : vertexIndices) {
                 if (normalSummaVertex[vertexIndex] == null) {
-                    normalSummaVertex[vertexIndex] = normalsPolygon.get(indexPoligon);
+                    normalSummaVertex[vertexIndex] = (NDimensionalVector) normalsPolygon.get(indexPoligon);
                     count[vertexIndex] = 1;
                 } else {
-                    normalSummaVertex[vertexIndex] = VectorOperations.summaVector(normalSummaVertex[vertexIndex], normalsPolygon.get(indexPoligon));
+                    normalSummaVertex[vertexIndex] = (NDimensionalVector) normalSummaVertex[vertexIndex].addition(normalsPolygon.get(indexPoligon));
                     count[vertexIndex]++;
                 }
             }
         }
         for (int i = 0; i < count.length; i++) {
             // по сути нахождение среднего арифметического в данном случае не особо нужно, так как это просто сокращает длинну вектора суммы, что так же осуществляется с помощью нормализации
-            normalsVertex.add(i, VectorOperations.normalize(VectorOperations.quotient(normalSummaVertex[i], count[i])));
+            normalsVertex.add(i,normalSummaVertex[i].scale( 1.0/count[i]).normalization());
         }
         return normalsVertex;
     }
