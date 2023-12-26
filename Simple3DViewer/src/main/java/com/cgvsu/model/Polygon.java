@@ -67,7 +67,7 @@ public class Polygon {
         for(Integer vert : vertexIndices){
             vectors.add(mesh.vertices.get(vert));
         }
-        double lightCoeff  = -NormalUtils.normalPolygon(this, mesh.vertices).scalarProduct(mesh.vertices.get(this.vertexIndices.get(0)).subtraction(light));
+        double lightCoeff  = -NormalUtils.normalPolygon(this, mesh.vertices).scalarProduct(mesh.vertices.get(this.vertexIndices.get(0)).subtraction(light)) + 0.05;
         if(lightCoeff < 0){
             lightCoeff =0;
         }

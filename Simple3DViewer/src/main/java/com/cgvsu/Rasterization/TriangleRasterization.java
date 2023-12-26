@@ -223,7 +223,7 @@ public class TriangleRasterization {
                 try {
 
                     if(Zbuffer[x][y] > v1.getC()){
-                        pw.setColor(x, y, new Color(1 * light, 0, 0, 1));
+                        pw.setColor(x, y, new Color(1 * (light), 0, 0, 1));
                         Zbuffer[x][y] = v1.getC();
                     }
 
