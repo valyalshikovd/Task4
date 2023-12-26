@@ -245,6 +245,9 @@ public class GuiController {
     public void handleFill(ActionEvent actionEvent) {
         javafx.scene.paint.Color selectedColor = colorpick.getValue();
         System.out.println(selectedColor);
+        if(scene.getLoadedModels().get(scene.currentModelName) == null){
+            return;
+        }
         scene.getLoadedModels().get(scene.currentModelName).isFill = selectedColor;
     }
 

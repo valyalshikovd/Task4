@@ -2,6 +2,7 @@ package com.cgvsu.render_engine;
 
 import com.cgvsu.Math.Matrix.FourDimensionalMatrix;
 import com.cgvsu.Math.Matrix.NDimensionalMatrix;
+import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.model.Model;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -23,6 +24,9 @@ public class Scene {
     public String currentModelName = null;
 
     private Map<String, Model> loadedModels = new HashMap<>();
+
+
+    private ThreeDimensionalVector light = new ThreeDimensionalVector(1,1,0);
 
 
 
@@ -81,7 +85,7 @@ public class Scene {
 
     public void drawAllMeshes(GraphicsContext g) {
         for (String model : loadedModels.keySet()) {
-            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height);
+            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, light);
         }
     }
 

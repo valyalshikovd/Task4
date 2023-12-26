@@ -42,7 +42,7 @@ public class Model {
     }
 
 
-    public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height ){
+    public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height, ThreeDimensionalVector light ){
         List<Polygon> currPoligons = polygons;
         if(isTriangulate || isFill != Color.WHITE){
             currPoligons = triangulate();
@@ -51,7 +51,7 @@ public class Model {
             p.drawPolygon(g, modelViewProjectionMatrix, this, (
                     (NDimensionalMatrix)new AffineTransformation().scale(scaleX, scaleY, scaleZ).multiplyMatrix(
                     (NDimensionalMatrix)new AffineTransformation().rotate((float) rotateX, (float) rotateY, (float) rotateZ)).multiplyMatrix(
-                            (NDimensionalMatrix) new AffineTransformation().translate(translateX, translateY, translateZ))),width,height,isFill);
+                            (NDimensionalMatrix) new AffineTransformation().translate(translateX, translateY, translateZ))),width,height,isFill ,light);
         }
     }
     public boolean isEmpty() {

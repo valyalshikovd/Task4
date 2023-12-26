@@ -55,12 +55,19 @@ public class Polygon {
         return normalIndices;
     }
 
-    public void drawPolygon(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, Model mesh, NDimensionalMatrix m, int width, int height, Color isFill){
+    public void drawPolygon(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, Model mesh, NDimensionalMatrix m, int width, int height, Color isFill, ThreeDimensionalVector light){
 
 
         ArrayList<Point2f> resultPoints = new ArrayList<>();
         ArrayList<TwoDimensionalVector> textureVertexes = new ArrayList<>();
         int nVerticesInPolygon = vertexIndices.size();
+
+        System.out.println(mesh.normals.size());
+        double lightCoeff  = -mesh.normals.get(normalIndices.get(1)).scalarProduct(light);
+        if(lightCoeff < 0){
+            lightCoeff =0;
+            System.out.println(lightCoeff);
+        }
         for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
             ThreeDimensionalVector vertex =  mesh.vertices.get(vertexIndices.get(vertexInPolygonInd));
             Point2f resultPoint = vertexToPoint(multiplyMatrix4ByVector3(modelViewProjectionMatrix, multiplyMatrix4ByVector3(m, vertex)), width, height);
@@ -68,12 +75,12 @@ public class Polygon {
             textureVertexes.add(mesh.textureVertices.get(textureVertexIndices.get(vertexInPolygonInd)));
         }
 
-        if(mesh.isTriangulate || (isFill != Color.WHITE)) {
+        if( isFill != Color.WHITE) {
 
             TriangleRasterization.drawTriangle(g.getPixelWriter(), new TwoDimensionalVector(resultPoints.get(0).x, resultPoints.get(0).y),
                     new TwoDimensionalVector(resultPoints.get(1).x, resultPoints.get(1).y),
                     new TwoDimensionalVector(resultPoints.get(2).x, resultPoints.get(2).y),
-                    Color.BLACK, Color.BLACK, Color.BLACK,
+                    isFill,
                     textureVertexes);
         }else {
         for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
