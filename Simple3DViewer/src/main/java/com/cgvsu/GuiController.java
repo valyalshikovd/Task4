@@ -13,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
@@ -73,6 +74,7 @@ public class GuiController {
     public TextField nameOfCamera;
     public AnchorPane loadedTextures;
     public ListView listViewLights;
+    public Button fillModel;
     private boolean cameraIsLoaded;
 
 
@@ -135,12 +137,15 @@ public class GuiController {
 
         scene = new Scene(camera, (int) width, (int) height);
 
+        scene.setCurrentCamera(camera);
+        this.camera.setAspectRatio((float) (width / height));
+        scene.getAddedCameras().put("mainCamera", camera);
+        listViewCameras.getItems().add("mainCamera");
+
 
         KeyFrame frame = new KeyFrame(Duration.millis(90), event -> {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width , height);
-            camera.setAspectRatio((float) (width / height));
-            scene.setCamera(camera, (int) width, (int) height);
             scene.drawAllMeshes(canvas.getGraphicsContext2D());
 
 //            canvas.getGraphicsContext2D().getPixelWriter().setColor(100,100, new Color(1.0, 0.0, 0.0, 1.0));
@@ -156,6 +161,7 @@ public class GuiController {
 
         timeline.getKeyFrames().add(frame);
         timeline.play();
+
     }
 
 
@@ -187,32 +193,32 @@ public class GuiController {
 
     @FXML
     public void handleCameraForward(ActionEvent actionEvent) {
-        camera.movePosition(new ThreeDimensionalVector(0, 0, -TRANSLATION));
+        scene.getCamera().movePosition(new ThreeDimensionalVector(0, 0, -TRANSLATION));
     }
 
     @FXML
     public void handleCameraBackward(ActionEvent actionEvent) {
-        camera.movePosition(new ThreeDimensionalVector(0, 0, TRANSLATION));
+        scene.getCamera().movePosition(new ThreeDimensionalVector(0, 0, TRANSLATION));
     }
 
     @FXML
     public void handleCameraLeft(ActionEvent actionEvent) {
-        camera.movePosition(new ThreeDimensionalVector(TRANSLATION, 0, 0));
+        scene.getCamera().movePosition(new ThreeDimensionalVector(TRANSLATION, 0, 0));
     }
 
     @FXML
     public void handleCameraRight(ActionEvent actionEvent) {
-        camera.movePosition(new ThreeDimensionalVector(-TRANSLATION, 0, 0));
+        scene.getCamera().movePosition(new ThreeDimensionalVector(-TRANSLATION, 0, 0));
     }
 
     @FXML
     public void handleCameraUp(ActionEvent actionEvent) {
-        camera.movePosition(new ThreeDimensionalVector(0, TRANSLATION, 0));
+        scene.getCamera().movePosition(new ThreeDimensionalVector(0, TRANSLATION, 0));
     }
 
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) {
-        camera.movePosition(new ThreeDimensionalVector(0, -TRANSLATION, 0));
+        scene.getCamera().movePosition(new ThreeDimensionalVector(0, -TRANSLATION, 0));
     }
 
 
@@ -298,34 +304,27 @@ public class GuiController {
         listViewModels.setStyle("-fx-control-inner-background: white;");
     }
 
+    //работа с камерой
+
+    public void cameraSelected (MouseEvent event) throws IOException {
+        if (Objects.equals(event.getButton().toString(), "PRIMARY")) {
+            checkSelectedCameras();
+            int index = listViewCameras.getSelectionModel().getSelectedIndex();
+            System.out.println('f');
+            scene.setCurrentCamera(scene.getAddedCameras().get(listViewCameras.getItems().get(index)));
+
+        }
+    }
 
     public void checkSelectedCameras () {
         selectedCameras = new ArrayList<>();
         List<Integer> list = listViewCameras.getSelectionModel().getSelectedIndices();
         for (Integer i : list) {
             selectedCameras.add(listViewCameras.getItems().get(i));
+            System.out.println(i);
         }
     }
-
-    public void cameraSelected (MouseEvent event) throws IOException {
-        if (Objects.equals(event.getButton().toString(), "PRIMARY")) {
-            checkSelectedCameras();
-            int index = listViewCameras.getSelectionModel().getSelectedIndex();
-            scene.setCurrentCamera(scene.getAddedCameras().get(listViewCameras.getItems().get(index)));
-            anchorPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-                    if (event.getCode() == KeyCode.DELETE && listViewCameras.getItems().size() > selectedCameras.size()) {
-                        for (String str : selectedCameras) {
-                            listViewCameras.getItems().remove(str);
-                            scene.getAddedCameras().remove(str);
-                            scene.setCurrentCamera(scene.getAddedCameras().get(listViewCameras.getItems().get(listViewCameras.getItems().size()-1)));
-                        }
-                    }
-                }
-            });
-        }
-    }
+    //окошко добавления
     public void onAddCameraMenuItemClick() {
         addCamerasPane.setVisible(true);
     }
@@ -340,6 +339,7 @@ public class GuiController {
         name = checkContainsTexture(name);
         addedCameras.put(name, newCamera);
         listViewCameras.getItems().add(name);
+        System.out.println(newCamera);
         addCamerasPane.setVisible(false);
         cameraIsLoaded = true;
     }

@@ -76,13 +76,16 @@ public class Scene {
         this.height = height;
         this.width = width;
 
+        this.camera.setAspectRatio((float) (width / height));
+
         this.modelMatrix = rotateScaleTranslate();
-        this.viewMatrix = camera.getViewMatrix();
-        this.projectionMatrix = camera.getProjectionMatrix();
+        this.viewMatrix = this.camera.getViewMatrix();
+        this.projectionMatrix = this.camera.getProjectionMatrix();
 
         this.modelViewProjectionMatrix = modelMatrix;
         modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(viewMatrix);
         modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(projectionMatrix);
+
 
     }
 
@@ -113,13 +116,16 @@ public class Scene {
         return addedCameras;
     }
 
-    public void setCurrentCamera(Camera currentCamera) {
-        this.camera = camera;
+    public void setCurrentCamera(Camera camera) {
+       // this.camera = camera;
+        setCamera(camera, width,height);
     }
 
     public Map<String, Image> getLoadedTextures() {
         return loadedTextures;
     }
 
-
+    public Camera getCamera() {
+        return camera;
+    }
 }
