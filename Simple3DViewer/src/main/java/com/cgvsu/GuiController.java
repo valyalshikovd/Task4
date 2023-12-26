@@ -76,7 +76,6 @@ public class GuiController {
     public TextField nameOfCamera;
     public AnchorPane loadedTextures;
     public ListView listViewLights;
-    public Button fillModel;
     public AnchorPane terminal;
     public TextArea terminalText;
 
