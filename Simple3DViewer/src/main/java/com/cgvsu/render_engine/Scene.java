@@ -5,6 +5,7 @@ import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.model.Model;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -24,6 +25,11 @@ public class Scene {
     public String currentModelName = null;
 
     private Map<String, Model> loadedModels = new HashMap<>();
+    private Map<String, Camera> addedCameras = new HashMap<>();
+
+    private Map<String, Image> loadedTextures = new HashMap<>();
+
+
 
 
     private ThreeDimensionalVector light = new ThreeDimensionalVector(30,10,1);
@@ -101,6 +107,18 @@ public class Scene {
         for (String model : loadedModels.keySet()) {
             loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, light, Zbuffer);
         }
+    }
+
+    public Map<String, Camera> getAddedCameras() {
+        return addedCameras;
+    }
+
+    public void setCurrentCamera(Camera currentCamera) {
+        this.camera = camera;
+    }
+
+    public Map<String, Image> getLoadedTextures() {
+        return loadedTextures;
     }
 
 

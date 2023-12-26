@@ -5,6 +5,7 @@ import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.Scene;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -12,10 +13,13 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -28,11 +32,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.render_engine.Camera;
+
+import javax.vecmath.Vector3f;
 
 public class GuiController {
 
@@ -54,6 +64,17 @@ public class GuiController {
     public CheckBox triangulationCheckBox;
     public CheckBox fillCheckBox;
     public ColorPicker colorpick;
+    public RadioMenuItem night;
+    public RadioMenuItem light;
+    public AnchorPane addCamerasPane;
+    public TextField xCamera;
+    public TextField yCamera;
+    public TextField zCamera;
+    public TextField nameOfCamera;
+    public AnchorPane loadedTextures;
+    public ListView listViewLights;
+    private boolean cameraIsLoaded;
+
 
     @FXML
     AnchorPane anchorPane;
@@ -69,6 +90,10 @@ public class GuiController {
     private Scene scene;
 
     private ObservableList<String> items = FXCollections.observableArrayList();
+    @FXML
+    private ListView<String> listViewCameras;
+    private List<String> selectedCameras = new ArrayList<>();
+
 
     private Camera camera = new Camera(
             new ThreeDimensionalVector(0, 0, 100),
@@ -258,4 +283,82 @@ public class GuiController {
         alert.setContentText("Please correct the data.");
         alert.showAndWait();
     }
+    public void nightTheme () {
+        if (!night.isSelected()) {
+            night.setSelected(true);
+        }
+        light.setSelected(false);
+        anchorPane.setStyle("-fx-background-color: #818080;");
+        listViewModels.setStyle("-fx-control-inner-background: #888888;");
+    }
+
+    public void lightTheme () {
+        night.setSelected(false);
+        anchorPane.setStyle("-fx-background-color: white;");
+        listViewModels.setStyle("-fx-control-inner-background: white;");
+    }
+
+
+    public void checkSelectedCameras () {
+        selectedCameras = new ArrayList<>();
+        List<Integer> list = listViewCameras.getSelectionModel().getSelectedIndices();
+        for (Integer i : list) {
+            selectedCameras.add(listViewCameras.getItems().get(i));
+        }
+    }
+
+    public void cameraSelected (MouseEvent event) throws IOException {
+        if (Objects.equals(event.getButton().toString(), "PRIMARY")) {
+            checkSelectedCameras();
+            int index = listViewCameras.getSelectionModel().getSelectedIndex();
+            scene.setCurrentCamera(scene.getAddedCameras().get(listViewCameras.getItems().get(index)));
+            anchorPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    if (event.getCode() == KeyCode.DELETE && listViewCameras.getItems().size() > selectedCameras.size()) {
+                        for (String str : selectedCameras) {
+                            listViewCameras.getItems().remove(str);
+                            scene.getAddedCameras().remove(str);
+                            scene.setCurrentCamera(scene.getAddedCameras().get(listViewCameras.getItems().get(listViewCameras.getItems().size()-1)));
+                        }
+                    }
+                }
+            });
+        }
+    }
+    public void onAddCameraMenuItemClick() {
+        addCamerasPane.setVisible(true);
+    }
+
+    public void okCameraPane () {
+        Camera newCamera = new Camera(
+                new ThreeDimensionalVector(Integer.parseInt(xCamera.getText()), Integer.parseInt(yCamera.getText()), Integer.parseInt(zCamera.getText())),
+                new ThreeDimensionalVector(0, 0, 0),
+                1.0F, 1, 0.01F, 100);
+        Map<String, Camera> addedCameras = scene.getAddedCameras();
+        String name =  nameOfCamera.getText();
+        name = checkContainsTexture(name);
+        addedCameras.put(name, newCamera);
+        listViewCameras.getItems().add(name);
+        addCamerasPane.setVisible(false);
+        cameraIsLoaded = true;
+    }
+
+    public String checkContainsTexture (String str) {
+        int count = 0;
+        for (String name : scene.getLoadedTextures().keySet()) {
+            if (name.contains(str)) {
+                count++;
+            }
+        }
+        if (count > 0) {
+            str += "(" + count + ")";
+        }
+        return str;
+    }
+
+    public void closeCameraPane () {
+        addCamerasPane.setVisible(false);
+    }
+
 }
