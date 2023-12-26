@@ -3,6 +3,7 @@ package com.cgvsu;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.Scene;
+import com.cgvsu.terminal.Terminal;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -15,6 +16,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.PixelWriter;
@@ -75,7 +77,10 @@ public class GuiController {
     public AnchorPane loadedTextures;
     public ListView listViewLights;
     public Button fillModel;
-    private boolean cameraIsLoaded;
+    public AnchorPane terminal;
+    public TextArea terminalText;
+
+
 
 
     @FXML
@@ -95,6 +100,9 @@ public class GuiController {
     @FXML
     private ListView<String> listViewCameras;
     private List<String> selectedCameras = new ArrayList<>();
+
+    //Terminal terminalWrite = new Terminal(terminalText);
+
 
 
     private Camera camera = new Camera(
@@ -185,6 +193,9 @@ public class GuiController {
             scene.getLoadedModels().put(fileName.toString(), mesh);
             items.add(fileName.toString());
             listViewModels.setItems(items);
+            Terminal terminalWrite = new Terminal(terminalText);
+
+            terminalWrite.logModelLoading(String.valueOf(fileName));
             // todo: обработка ошибок
         } catch (IOException exception) {
 
@@ -310,7 +321,6 @@ public class GuiController {
         if (Objects.equals(event.getButton().toString(), "PRIMARY")) {
             checkSelectedCameras();
             int index = listViewCameras.getSelectionModel().getSelectedIndex();
-            System.out.println('f');
             scene.setCurrentCamera(scene.getAddedCameras().get(listViewCameras.getItems().get(index)));
 
         }
@@ -321,7 +331,6 @@ public class GuiController {
         List<Integer> list = listViewCameras.getSelectionModel().getSelectedIndices();
         for (Integer i : list) {
             selectedCameras.add(listViewCameras.getItems().get(i));
-            System.out.println(i);
         }
     }
     //окошко добавления
@@ -339,9 +348,10 @@ public class GuiController {
         name = checkContainsTexture(name);
         addedCameras.put(name, newCamera);
         listViewCameras.getItems().add(name);
-        System.out.println(newCamera);
         addCamerasPane.setVisible(false);
-        cameraIsLoaded = true;
+        Terminal terminalWrite = new Terminal(terminalText);
+        terminalWrite.logCameraLoading(name, xCamera.getText(), yCamera.getText(), zCamera.getText());
+
     }
 
     public String checkContainsTexture (String str) {

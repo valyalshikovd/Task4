@@ -12,10 +12,12 @@
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="anchorPane" prefHeight="784.0" prefWidth="1485.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgvsu.GuiController">
     <MenuBar prefHeight="26.0" prefWidth="1485.0">
@@ -73,7 +75,10 @@
         <tabs>
             <Tab text="Terminal">
                 <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="264.0" prefWidth="346.0" />
+                    <AnchorPane fx:id="terminal" minHeight="0.0" minWidth="0.0" prefHeight="264.0" prefWidth="346.0">
+                  <children>
+                     <TextArea fx:id="terminalText" layoutX="-5.0" layoutY="1.0" prefHeight="283.0" prefWidth="762.0" />
+                  </children></AnchorPane>
                 </content>
             </Tab>
             <Tab text="Loaded models">
@@ -275,4 +280,9 @@
          <Label layoutX="420.0" layoutY="126.0" text="Z:" />
       </children>
    </AnchorPane>
+   <Text layoutX="167.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0">
+      <font>
+         <Font name="Book Antiqua" size="12.0" />
+      </font>
+   </Text>
 </AnchorPane>
