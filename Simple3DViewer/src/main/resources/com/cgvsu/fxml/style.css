@@ -1,5 +1,5 @@
 .tab-pane .tab:selected {
-    -fx-background-color: rgba(89, 131, 89, 0.78);
+    -fx-background-color: rgba(118, 155, 119, 0.78);
 }
 
 .tab-pane .tab {
@@ -11,4 +11,12 @@
     -fx-background-color: rgba(135, 156, 161, 0.79);
     -fx-border-radius: 10px; /* Радиус закругления */
     -fx-background-radius: 10px; /* Радиус закругления фона */
+}
+
+.my-button {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 50%;
 }

@@ -78,8 +78,9 @@ public class GuiController {
     public ListView listViewLights;
     public AnchorPane terminal;
     public TextArea terminalText;
-
-
+    public CheckBox texturesCheckBox;
+    public Button buttonLeft;
+    public Button buttonRight;
 
 
     @FXML
@@ -207,6 +208,7 @@ public class GuiController {
         scene.getCamera().movePosition(new ThreeDimensionalVector(TRANSLATION, 0, 0));
     }
 
+
     @FXML
     public void handleCameraRight(ActionEvent actionEvent) {
         scene.getCamera().movePosition(new ThreeDimensionalVector(-TRANSLATION, 0, 0));
@@ -301,12 +303,18 @@ public class GuiController {
         light.setSelected(false);
         anchorPane.setStyle("-fx-background-color: #818080;");
         listViewModels.setStyle("-fx-control-inner-background: #888888;");
+        listViewCameras.setStyle("-fx-control-inner-background: #888888;");
+        listViewLights.setStyle("-fx-control-inner-background: #888888;");
     }
 
     public void lightTheme () {
         night.setSelected(false);
         anchorPane.setStyle("-fx-background-color: white;");
         listViewModels.setStyle("-fx-control-inner-background: white;");
+        listViewCameras.setStyle("-fx-control-inner-background: #ffffff;");
+        listViewLights.setStyle("-fx-control-inner-background: #ffffff;");
+
+
     }
 
     //работа с камерой

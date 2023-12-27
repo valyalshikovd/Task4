@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -14,6 +15,9 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.effect.Light.Distant?>
+<?import javafx.scene.effect.Lighting?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
@@ -68,16 +72,19 @@
             <RadioMenuItem fx:id="night" mnemonicParsing="false" onAction="#nightTheme" text="Night" />
          </items>
       </Menu>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
     </MenuBar>
 
     <Canvas fx:id="canvas" height="553.0" width="1173.0" AnchorPane.topAnchor="30.0" />
-    <TabPane layoutX="1.0" layoutY="588.0" prefHeight="310.0" prefWidth="752.0" stylesheets="@style.css" tabClosingPolicy="UNAVAILABLE">
+    <TabPane blendMode="DARKEN" layoutX="1.0" layoutY="588.0" prefHeight="310.0" prefWidth="757.0" stylesheets="@style.css" tabClosingPolicy="UNAVAILABLE">
         <tabs>
             <Tab text="Terminal">
                 <content>
                     <AnchorPane fx:id="terminal" minHeight="0.0" minWidth="0.0" prefHeight="264.0" prefWidth="346.0">
                   <children>
-                     <TextArea fx:id="terminalText" layoutX="-5.0" layoutY="1.0" prefHeight="283.0" prefWidth="762.0" />
+                     <TextArea fx:id="terminalText" layoutX="-5.0" layoutY="-4.0" prefHeight="288.0" prefWidth="762.0" />
                   </children></AnchorPane>
                 </content>
             </Tab>
@@ -94,7 +101,7 @@
            <content>
              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
-                     <ListView fx:id="listViewCameras" layoutX="8.0" layoutY="-1.0" onMouseClicked="#cameraSelected" prefHeight="284.0" prefWidth="752.0" />
+                     <ListView fx:id="listViewCameras" layoutX="-2.0" layoutY="-1.0" onMouseClicked="#cameraSelected" prefHeight="284.0" prefWidth="762.0" />
                   </children>
                </AnchorPane>
            </content>
@@ -103,7 +110,7 @@
            <content>
              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
-                     <ListView fx:id="listViewLights" layoutY="-1.0" prefHeight="281.0" prefWidth="752.0" />
+                     <ListView fx:id="listViewLights" layoutY="-1.0" prefHeight="282.0" prefWidth="758.0" />
                   </children>
                </AnchorPane>
            </content>
@@ -112,12 +119,18 @@
            <content>
              <AnchorPane fx:id="loadedTextures" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
-                     <ListView layoutX="-3.0" layoutY="-2.0" prefHeight="285.0" prefWidth="758.0" />
+                     <ListView layoutX="-3.0" layoutY="-2.0" prefHeight="286.0" prefWidth="764.0" />
                   </children>
                </AnchorPane>
            </content>
          </Tab>
         </tabs>
+      <effect>
+         <InnerShadow />
+      </effect>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
     </TabPane>
     <TabPane fx:id="mainPanel" prefHeight="899.0" prefWidth="306.0" side="LEFT" stylesheets="@style.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.rightAnchor="4.0">
         <tabs>
@@ -219,6 +232,11 @@
                                 </font>
                             </Label>
                             <ColorPicker fx:id="colorpick" layoutX="121.0" layoutY="101.0" prefHeight="26.0" prefWidth="125.0" />
+                     <CheckBox fx:id="texturesCheckBox" layoutX="46.0" layoutY="196.0" mnemonicParsing="false" text="Textures">
+                        <font>
+                           <Font size="18.0" />
+                        </font>
+                     </CheckBox>
                         </children></AnchorPane>
                 </content>
             </Tab>
@@ -255,6 +273,12 @@
            </content>
          </Tab>
         </tabs>
+      <effect>
+         <InnerShadow />
+      </effect>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
     </TabPane>
    <AnchorPane fx:id="addCamerasPane" layoutX="462.0" layoutY="262.0" prefHeight="200.0" prefWidth="529.0" styleClass="my-anchor-pane" stylesheets="@style.css" visible="false">
       <children>
@@ -284,4 +308,32 @@
          <Font name="Book Antiqua" size="12.0" />
       </font>
    </Text>
+   <Button fx:id="buttonLeft" layoutX="702.0" layoutY="526.0" mnemonicParsing="false" onAction="#handleCameraLeft" opacity="0.51" styleClass="my-button" stylesheets="@style.css" text="&gt;">
+      <effect>
+         <Lighting>
+            <bumpInput>
+               <InnerShadow />
+            </bumpInput>
+            <light>
+               <Light.Distant />
+            </light>
+         </Lighting>
+      </effect>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></Button>
+   <Button fx:id="buttonRight" layoutX="551.0" layoutY="526.0" mnemonicParsing="false" onAction="#handleCameraRight" opacity="0.5" styleClass="my-button" stylesheets="@style.css" text="&lt;">
+      <effect>
+         <Lighting>
+            <bumpInput>
+               <InnerShadow />
+            </bumpInput>
+            <light>
+               <Light.Distant />
+            </light>
+         </Lighting>
+      </effect>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></Button>
 </AnchorPane>
