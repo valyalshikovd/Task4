@@ -98,7 +98,7 @@ public class TriangleRasterization {
 
                 //   try {
 
-                System.out.println(image.getHeight() + " " + image.getWidth());
+                System.out.println( (int)(PTcoordX * 4095) + " " );
 
                 color = pixelReader.getColor(2000, 2450);
 

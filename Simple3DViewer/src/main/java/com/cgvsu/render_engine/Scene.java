@@ -5,6 +5,7 @@ import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.model.Model;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -23,12 +24,14 @@ public class Scene {
     private NDimensionalMatrix modelViewProjectionMatrix;
     public String currentModelName = null;
 
+    private Map<String, Camera> addedCameras = new HashMap<>();
     private Map<String, Model> loadedModels = new HashMap<>();
+    private Map<String, Image> loadedTextures = new HashMap<>();
 
 
     private ThreeDimensionalVector light = new ThreeDimensionalVector(30,10,1);
 
-    private double[][] Zbuffer;
+    private Zbuffer zbuffer;
 
 
 
@@ -37,7 +40,7 @@ public class Scene {
         this.width = width;
         this.height = height;
 
-        this.Zbuffer = new double[width][height];
+        this.zbuffer = new Zbuffer(width, height);
 
 
 
@@ -61,6 +64,9 @@ public class Scene {
 //        }
     }
 
+    public Map<String, Camera> getAddedCameras() {
+        return addedCameras;
+    }
     public Map<String, Model> getLoadedModels() {
         return loadedModels;
     }
@@ -90,17 +96,24 @@ public class Scene {
 
 
     public void drawAllMeshes(GraphicsContext g) {
-        for(int i = 0; i< width; i++){
-            for(int j = 0; j< height; j++){
-
-                this.Zbuffer[i][j] = Double.MAX_VALUE;
-
-            }
-        }
+        zbuffer.clearBuffer();
 
         for (String model : loadedModels.keySet()) {
-            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, light, Zbuffer);
+            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, light, zbuffer);
         }
+    }
+
+    public void setCurrentCamera(Camera camera) {
+        // this.camera = camera;
+        setCamera(camera, width,height);
+    }
+
+    public Map<String, Image> getLoadedTextures() {
+        return loadedTextures;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 
 

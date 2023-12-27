@@ -150,7 +150,7 @@ public class GuiController {
         listViewCameras.getItems().add("mainCamera");
 
 
-        KeyFrame frame = new KeyFrame(Duration.millis(90), event -> {
+        KeyFrame frame = new KeyFrame(Duration.millis(60), event -> {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width , height);
             scene.drawAllMeshes(canvas.getGraphicsContext2D());
@@ -277,6 +277,9 @@ public class GuiController {
         System.out.println(fileName);
         ObjWriter.write(fileName, scene.getLoadedModels().get(scene.currentModelName));
 
+        System.out.println(scene.getLoadedModels().get(scene.currentModelName).normals.size());
+        System.out.println(scene.getLoadedModels().get(scene.currentModelName).textureVertices.size());
+
     }
 
     public void handleTriangulation(ActionEvent actionEvent) {
@@ -289,7 +292,8 @@ public class GuiController {
         if(scene.getLoadedModels().get(scene.currentModelName) == null){
             return;
         }
-        scene.getLoadedModels().get(scene.currentModelName).isFill = selectedColor;
+        scene.getLoadedModels().get(scene.currentModelName).fillingColor = selectedColor;
+        scene.getLoadedModels().get(scene.currentModelName).isFill = true;
     }
 
     public static void exception(String text) {
@@ -352,6 +356,7 @@ public class GuiController {
         terminalWrite.logCameraLoading(name, xCamera.getText(), yCamera.getText(), zCamera.getText());
 
     }
+
 
     public String checkContainsTexture (String str) {
         int count = 0;
