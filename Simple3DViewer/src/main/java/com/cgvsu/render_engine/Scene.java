@@ -82,7 +82,9 @@ public class Scene {
 
         this.modelViewProjectionMatrix = modelMatrix;
         modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(viewMatrix);
-        modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(projectionMatrix);
+        this.modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(projectionMatrix);
+
+
 
     }
 
@@ -96,6 +98,14 @@ public class Scene {
 
 
     public void drawAllMeshes(GraphicsContext g) {
+        this.modelMatrix = rotateScaleTranslate();
+        this.viewMatrix = camera.getViewMatrix();
+        this.projectionMatrix = camera.getProjectionMatrix();
+
+        this.modelViewProjectionMatrix = modelMatrix;
+        modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(viewMatrix);
+        this.modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(projectionMatrix);
+
         zbuffer.clearBuffer();
 
         for (String model : loadedModels.keySet()) {

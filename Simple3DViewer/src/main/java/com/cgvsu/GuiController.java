@@ -155,15 +155,6 @@ public class GuiController {
             canvas.getGraphicsContext2D().clearRect(0, 0, width , height);
             scene.drawAllMeshes(canvas.getGraphicsContext2D());
 
-//            canvas.getGraphicsContext2D().getPixelWriter().setColor(100,100, new Color(1.0, 0.0, 0.0, 1.0));
-//            canvas.getGraphicsContext2D().getPixelWriter().setColor(100,101, new Color(1.0, 0.0, 0.0, 1.0));
-//            canvas.getGraphicsContext2D().getPixelWriter().setColor(100,102, new Color(1.0, 0.0, 0.0, 1.0));
-//            canvas.getGraphicsContext2D().getPixelWriter().setColor(101,100, new Color(1.0, 0.0, 0.0, 1.0));
-//            canvas.getGraphicsContext2D().getPixelWriter().setColor(101,101, new Color(1.0, 0.0, 0.0, 1.0));
-//            canvas.getGraphicsContext2D().getPixelWriter().setColor(101,102, new Color(1.0, 0.0, 0.0, 1.0));
-//
-
-
         });
 
         timeline.getKeyFrames().add(frame);

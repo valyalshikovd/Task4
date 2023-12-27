@@ -98,9 +98,9 @@ public class TriangleRasterization {
 
                 //   try {
 
-                System.out.println( (int)(PTcoordX * 4095) + " " );
+                //System.out.println( (int)(PTcoordX * 4095) + " " );
 
-                color = pixelReader.getColor(2000, 2450);
+                color = pixelReader.getColor((int)(texture.get(0).getA() * 4095), (int)(texture.get(0).getB() * 4095));
 
                 try {
                     if(zbuffer.bufferCheck(x,y,v1.getC())){
@@ -194,13 +194,13 @@ public class TriangleRasterization {
 //                System.out.println(Arrays.toString(texture.get(0).getArrValues()));
 //                System.out.println(Arrays.toString(texture.get(1).getArrValues()));
 //                System.out.println(Arrays.toString(texture.get(2).getArrValues()));
-
-                //    double PTcoordX =  Math.abs(texture.get(0).getA() * barycentricCoordinates.getU() + texture.get(1).getA() * barycentricCoordinates.getV()  +texture.get(2).getA() * barycentricCoordinates.getW()) / area;
-                //    double PTcoordY =  Math.abs(texture.get(0).getB() * barycentricCoordinates.getU() + texture.get(1).getB() * barycentricCoordinates.getV() + +texture.get(2).getB() * barycentricCoordinates.getW()) / area;
+                    double PTcoordX =  Math.abs(texture.get(0).getA() * barycentricCoordinates.getU() + texture.get(1).getA() * barycentricCoordinates.getV()  +texture.get(2).getA() * barycentricCoordinates.getW()) / area;
+                    double PTcoordY =  Math.abs(texture.get(0).getB() * barycentricCoordinates.getU() + texture.get(1).getB() * barycentricCoordinates.getV() + +texture.get(2).getB() * barycentricCoordinates.getW()) / area;
 //
 
+
              //   System.out.println(Arrays.toString(texture.get(0).getArrValues()));
-                color = pixelReader.getColor(2000, 2300);
+                color = pixelReader.getColor((int)(texture.get(0).getA() * 4095), (int)(texture.get(0).getB() * 4095));
 //
                 //System.out.println(texture.get(0).getA() + " " +  texture.get(0).getB());
 
