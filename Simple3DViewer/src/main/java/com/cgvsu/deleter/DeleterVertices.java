@@ -64,7 +64,7 @@ public class DeleterVertices {
 			List<Integer> newVertexIndices = new ArrayList<>();
 			for (int polygonVertexIndex : polygon.getVertexIndices()) {
 				// Смещение в отрицательную сторону == число вершинных индексов на удаление, больше которых вершинный индекс полигона.
-				int offset = countLessThan(polygonVertexIndex + 1, sortedVertexIndicesToDelete);
+				int offset = countLessThan(polygonVertexIndex, sortedVertexIndicesToDelete);
 				// Добавляем вершину с отрицательным смещением
 				newVertexIndices.add(polygonVertexIndex - offset);
 			}

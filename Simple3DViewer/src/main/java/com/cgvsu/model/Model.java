@@ -53,7 +53,7 @@ public class Model {
                 .multiplyMatrix(new AffineTransformation().rotate((float) rotateX, (float) rotateY, (float) rotateZ))
                 .multiplyMatrix(new AffineTransformation().translate(translateX, translateY, translateZ));
         for (int i = 0; i <this.vertices.size(); i++){
-            sceneVertices.add( multiplyMatrix4ByVector3(m, vertices.get(i)));
+            sceneVertices.add(multiplyMatrix4ByVector3(m, vertices.get(i)));
         }
     }
 
