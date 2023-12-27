@@ -81,6 +81,10 @@ public class GuiController {
     public CheckBox texturesCheckBox;
     public Button buttonLeft;
     public Button buttonRight;
+    public Button buttonLight;
+    public TextField xlight;
+    public TextField ylight;
+    public TextField zlight;
 
 
     @FXML
@@ -119,27 +123,8 @@ public class GuiController {
 
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
-//
-//        ColorAdjust colorAdjust = new ColorAdjust();
-//        colorAdjust.setBrightness(sliderTheme.getValue() - 1);
-//        canvas.setEffect(colorAdjust);
-
-
-
-
-
 
         listViewModels.setItems(items);
-
-//        sliderTheme.valueProperty().addListener((observable, oldValue, newValue) -> {
-//            colorAdjust.setBrightness(newValue.floatValue() - 1);
-//            anchorPane.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 1.5) + ","  + (256 - newValue.doubleValue() * 1.5) + ", "  + (256 - newValue.doubleValue() * 1.5) + ")");
-//            listViewModels.setStyle("-fx-background-color:rgb(" + (newValue.doubleValue() * 2.55) + ","  + (newValue.doubleValue() * 2.55) + ", "  + (newValue.doubleValue() * 2.55) + ")");
-//            sliderRender.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
-//            sliderMove.setStyle("-fx-background-color:rgb(" + (256 - newValue.doubleValue() * 2) + ","  + (256 - newValue.doubleValue() * 2) + ", "  + (256 - newValue.doubleValue() * 2) + ")");
-//            canvas.setEffect(colorAdjust);
-//        });
-
         double width = canvas.getWidth();
         double height = canvas.getHeight();
 
@@ -151,7 +136,7 @@ public class GuiController {
         listViewCameras.getItems().add("mainCamera");
 
 
-        KeyFrame frame = new KeyFrame(Duration.millis(60), event -> {
+        KeyFrame frame = new KeyFrame(Duration.millis(150), event -> {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width , height);
             scene.drawAllMeshes(canvas.getGraphicsContext2D());
@@ -240,6 +225,9 @@ public class GuiController {
         textFieldScaleY.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).scaleY));
         textFieldScaleZ.setText(String.valueOf(scene.getLoadedModels().get(scene.currentModelName).scaleZ));
 
+        texturesCheckBox.setSelected(scene.getLoadedModels().get(scene.currentModelName).isTextured);
+        fillCheckBox.setSelected(scene.getLoadedModels().get(scene.currentModelName).isFill);
+        triangulationCheckBox.setSelected(scene.getLoadedModels().get(scene.currentModelName).isTriangulate);
     }
 
     public void handleTextFieldActionTranslate(ActionEvent actionEvent) {
@@ -374,4 +362,13 @@ public class GuiController {
         addCamerasPane.setVisible(false);
     }
 
+    public void handleTexture(ActionEvent actionEvent) {
+        scene.getLoadedModels().get(scene.currentModelName).isTextured = texturesCheckBox.isSelected();
+
+
+    }
+
+    public void addLight(ActionEvent actionEvent) {
+        scene.getLightSourses().put(String.valueOf(scene.getLightSourses().size()), new ThreeDimensionalVector(Double.parseDouble(xlight.getText()), Double.parseDouble(ylight.getText()), Double.parseDouble(zlight.getText())));
+    }
 }

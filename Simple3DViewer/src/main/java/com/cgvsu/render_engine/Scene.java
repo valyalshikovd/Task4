@@ -27,15 +27,17 @@ public class Scene {
     private Map<String, Camera> addedCameras = new HashMap<>();
     private Map<String, Model> loadedModels = new HashMap<>();
     private Map<String, Image> loadedTextures = new HashMap<>();
-
-
-    private ThreeDimensionalVector light = new ThreeDimensionalVector(30,10,1);
+    private Map<String, ThreeDimensionalVector> lightSourses = new HashMap<>();
 
     private Zbuffer zbuffer;
 
 
+    public Map<String, ThreeDimensionalVector> getLightSourses() {
+        return lightSourses;
+    }
 
     public Scene(Camera camera, int width, int height) {
+        lightSourses.put("default ", new ThreeDimensionalVector(30,10,1));
         this.camera = camera;
         this.width = width;
         this.height = height;
@@ -54,14 +56,6 @@ public class Scene {
 
         Path fileName = Path.of("C:/Users/770vd//Desktop/WrapHead.obj");
 
-//        try {
-//            String fileContent = Files.readString(fileName);
-//            Model mesh = ObjReader.read(fileContent);
-//            mesh.affineMatrix = (NDimensionalMatrix) new AffineTransformation().translate(20, 1, 1);
-//            listMesh.add(mesh);
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
     }
 
     public Map<String, Camera> getAddedCameras() {
@@ -87,7 +81,6 @@ public class Scene {
 
 
     }
-
     public void setWidth(int width) {
         this.width = width;
     }
@@ -109,7 +102,7 @@ public class Scene {
         zbuffer.clearBuffer();
 
         for (String model : loadedModels.keySet()) {
-            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, light, zbuffer);
+            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, (HashMap<String, ThreeDimensionalVector>) lightSourses, zbuffer);
         }
     }
 

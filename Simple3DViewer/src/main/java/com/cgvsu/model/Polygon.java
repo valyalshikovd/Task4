@@ -9,6 +9,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
 
 import static com.cgvsu.model.Model.multiplyMatrix4ByVector3;
 import static com.cgvsu.render_engine.GraphicConveyor.vertexToSurface;
@@ -55,30 +57,21 @@ public class Polygon {
                             int width, int height,
                             Color fillingColor,
                             boolean isFill,
-                            ThreeDimensionalVector light,
-                            Zbuffer zbuffer){
+                            HashMap< String, ThreeDimensionalVector> light,
+                            Zbuffer zbuffer, boolean isTexturing){
 
 
         ArrayList<ThreeDimensionalVector> resultPoints = new ArrayList<>();
         ArrayList<TwoDimensionalVector> textureVertexes = new ArrayList<>();
-
-
-
         int nVerticesInPolygon = vertexIndices.size();
-
-
-
-
         for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
             ThreeDimensionalVector vertex =  mesh.sceneVertices.get(vertexIndices.get(vertexInPolygonInd));
             vertex = vertexToSurface(multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertex), width, height);
 
             resultPoints.add(new ThreeDimensionalVector(vertex.getA(), vertex.getB(), vertex.getC()));
 
-            if(true){
+            if(isTexturing){
                 textureVertexes.add(mesh.textureVertices.get(textureVertexIndices.get(vertexInPolygonInd)));
-               // System.out.println(mesh.textureVertices.get(textureVertexIndices.get(vertexInPolygonInd)));
-                //todo
             }
         }
 
@@ -99,13 +92,13 @@ public class Polygon {
         }
     }
 
-
-    private double calculateLightCoefficient(Model mesh, ThreeDimensionalVector lightSourceVector ){
-        double lightCoeff  = -NormalUtils.normalPolygon(this, mesh.sceneVertices).
-                scalarProduct(mesh.sceneVertices.get(this.vertexIndices.get(0)).
-                        subtraction(lightSourceVector)) + 0.05;
-
-
+    private double calculateLightCoefficient(Model mesh, HashMap< String, ThreeDimensionalVector> lightSourceVector ){
+        double lightCoeff = 0;
+        for(String lightName : lightSourceVector.keySet()){
+            lightCoeff += -NormalUtils.normalPolygon(this, mesh.sceneVertices).
+                    scalarProduct(mesh.sceneVertices.get(this.vertexIndices.get(0)).
+                            subtraction(lightSourceVector.get(lightName))) + 0.05;
+        }
         if(lightCoeff < 0){
             lightCoeff = 0;
         }

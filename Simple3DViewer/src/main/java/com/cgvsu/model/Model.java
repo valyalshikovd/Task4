@@ -1,15 +1,11 @@
 package com.cgvsu.model;
 import com.cgvsu.Math.AffineTransormation.AffineTransformation;
-import com.cgvsu.Math.Matrix.Matrix;
 import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Math.Vectors.TwoDimensionalVector;
 import com.cgvsu.render_engine.Zbuffer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-
-
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -33,6 +29,7 @@ public class Model {
     public boolean isTriangulate = false;
     public Color fillingColor = null;
     public boolean isFill;
+    public boolean isTextured = false;
 
 
     public Model(ArrayList<ThreeDimensionalVector> vertices,
@@ -56,9 +53,7 @@ public class Model {
         }
     }
 
-
-
-    public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height, ThreeDimensionalVector light , Zbuffer zbuffer){
+    public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height, HashMap< String, ThreeDimensionalVector> light , Zbuffer zbuffer){
         List<Polygon> currPoligons = polygons;
         changeModel(modelViewProjectionMatrix);
         if(isTriangulate || fillingColor == null){
@@ -71,7 +66,8 @@ public class Model {
                     fillingColor,
                     isFill,
                     light,
-                    zbuffer);
+                    zbuffer,
+                    isTextured);
         }
     }
     public boolean isEmpty() {
