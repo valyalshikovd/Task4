@@ -75,7 +75,7 @@ public class GraphicConveyor {
         return new Vector3f(x / w, y / w, z / w);
     }
 
-    public static Point2f vertexToPoint(final ThreeDimensionalVector vertex, final int width, final int height) {
-        return new Point2f((float) (vertex.getA() * width + width / 2.0F), (float) (-vertex.getB() * height + height / 2.0F));
+    public static ThreeDimensionalVector vertexToSurface(final ThreeDimensionalVector vertex, final int width, final int height) {
+        return new ThreeDimensionalVector((vertex.getA() * width + width / 2.0),  (-vertex.getB() * height + height / 2.0), vertex.getC());
     }
 }

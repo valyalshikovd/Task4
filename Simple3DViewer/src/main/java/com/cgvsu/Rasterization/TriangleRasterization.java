@@ -1,17 +1,17 @@
 package com.cgvsu.Rasterization;
 
 
-import com.cgvsu.Math.Figure.Triangle;
+import com.cgvsu.Math.Barycentric.BarycentricCoordinates;
 import com.cgvsu.Math.Vectors.NDimensionalVector;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Math.Vectors.TwoDimensionalVector;
+import com.cgvsu.render_engine.Zbuffer;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -19,21 +19,10 @@ import java.util.List;
 public class TriangleRasterization {
 
 
-    static File file = new File("C:\\Users\\770vd\\Desktop\\Task4\\Simple3DViewer\\src\\main\\resources\\texture\\NeutralWrapped.jpg");
-    static BufferedImage image;
+    //static File file = new File("C:\\Users\\770vd\\Desktop\\Task4\\Simple3DViewer\\src\\main\\resources\\texture\\NeutralWrapped.jpg");
+    static Image image = new Image("C:\\Users\\wda11\\IdeaProjects\\Task4\\Simple3DViewer\\src\\main\\resources\\texture\\NeutralWrapped.jpg");
+    static PixelReader pixelReader = image.getPixelReader();
 
-//    static {
-//        try {
-//            image = ImageIO.read(file);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
-    /**
-     *
-     * A comparator used to sort the vertices of a triangle.
-     */
     private static final Comparator<ThreeDimensionalVector> COMPARATOR = (a, b) -> {
         int cmp = Double.compare(a.getB(), b.getB());
         if (cmp != 0) {
@@ -41,23 +30,7 @@ public class TriangleRasterization {
         } else return Double.compare(a.getA(), b.getA());
     };
 
-    /**
-     * A mutable vector used to speed up calculations.
-     */
     private static TwoDimensionalVector p = new TwoDimensionalVector(0,0);
-
-    /**
-     * A mutable color used to avoid creating new objects in loops.
-     */
-
-    /**
-     * Draws the specified triangle.
-     * @param pw The pixel writer.
-     */
-//    public static void drawTriangle(PixelWriter pw, Triangle trig) {
-//        drawTriangle(pw, trig.v1, trig.v2, trig.v3, trig.c1, trig.c2, trig.c3);
-//    }
-   // private static final MutableColor color = new MutableColor();
 
     public static void drawTriangle(
             final PixelWriter pw,
@@ -66,10 +39,9 @@ public class TriangleRasterization {
             final ThreeDimensionalVector v3,
             final Color color,
             List<TwoDimensionalVector> texture,
-            double light,
-            double[][] Zbuffer
+            double lightCoefficient,
+            Zbuffer zbuffer
     ) {
-        // Sort vertices by y.
         final var verts = new ThreeDimensionalVector[]{v1, v2, v3};
         Arrays.sort(verts, COMPARATOR);
         final int x1 = (int) verts[0].getA();
@@ -81,22 +53,18 @@ public class TriangleRasterization {
 
         // Double the area of the triangle. Used to calculate the barycentric coordinates later.
         final double area = Math.abs(((NDimensionalVector) v1.subtraction(v2)).crossMagnitude((NDimensionalVector)v1.subtraction(v3)));
-        drawTopTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3,  area,texture , light, Zbuffer);
-        drawBottomTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, light, Zbuffer);
+        drawTopTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3,  area,texture , lightCoefficient, zbuffer);
+        drawBottomTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, lightCoefficient, zbuffer);
     }
-
-    /**
-     * Draws the top triangle as part of the bigger triangle.
-     */
     private static void drawTopTriangle(
             final PixelWriter pw,
             final int x1, final int y1,
             final int x2, final int y2,
             final int x3, final int y3,
-            final ThreeDimensionalVector v1, final Color color,
+            final ThreeDimensionalVector v1, Color color,
             final ThreeDimensionalVector v2,
             final ThreeDimensionalVector v3,
-            final double area, List<TwoDimensionalVector> texture, double light, double[][] Zbuffer
+            final double area, List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer
     ) {
 
         final int x2x1 = x2 - x1;
@@ -105,24 +73,40 @@ public class TriangleRasterization {
         final int y3y1 = y3 - y1;
 
         for (int y = y1; y < y2; y++) {
-            // No need to check if the divisors are null, because the loop will not execute if y1 == y2.
-            int l = x2x1 * (y - y1) / y2y1 + x1; // Edge 1-2.
-            int r = x3x1 * (y - y1) / y3y1 + x1; // Edge 1-3.
-            if (l > r) { // Swap.
+            int l = x2x1 * (y - y1) / y2y1 + x1;
+            int r = x3x1 * (y - y1) / y3y1 + x1;
+            if (l > r) {
                 int tmp = l;
                 l = r;
                 r = tmp;
             }
+
+
             for (int x = l; x <= r; x++) {
+                BarycentricCoordinates barycentricCoordinates = new BarycentricCoordinates(
+                        new TwoDimensionalVector(v1.getA(), v1.getB()),
+                        new TwoDimensionalVector(v2.getA(), v2.getB()),
+                        new TwoDimensionalVector(v3.getA(), v3.getB()),
+                        new TwoDimensionalVector(x, y));
+
+
+
+                double PTcoordX =  Math.abs(texture.get(0).getA() * barycentricCoordinates.getU() + texture.get(1).getA() * barycentricCoordinates.getV()  +texture.get(2).getA() * barycentricCoordinates.getW()) ;
+                double PTcoordY =  Math.abs(texture.get(0).getB() * barycentricCoordinates.getU() + texture.get(1).getB() * barycentricCoordinates.getV() + texture.get(2).getB() * barycentricCoordinates.getW())  ;
+//
+
+
+                //   try {
+
+                System.out.println(image.getHeight() + " " + image.getWidth());
+
+                color = pixelReader.getColor(2000, 2450);
 
                 try {
-
-                    if(Zbuffer[x][y] > v1.getC()){
-                        pw.setColor(x, y, new Color(1 * light, 0, 0, 1));
-                        Zbuffer[x][y] = v1.getC();
+                    if(zbuffer.bufferCheck(x,y,v1.getC())){
+                        double k = 0.5;
+                        pw.setColor(x,y, new Color(color.getRed()  * (1 - k  ) + color.getRed()  * light * k, color.getGreen()  * (1 - k  ) + color.getGreen()  * light * k, color.getBlue()  * (1 - k ) + color.getBlue()  * light * k, 1));
                     }
-
-
                 }catch (Exception e){
                     //System.out.println(light);
                 }
@@ -162,19 +146,16 @@ public class TriangleRasterization {
         }
     }
 
-    /**
-     * Draws the bottom triangle as part of the bigger triangle.
-     */
     private static void drawBottomTriangle(
             final PixelWriter pw,
             final int x1, final int y1,
             final int x2, final int y2,
             final int x3, final int y3,
-            final ThreeDimensionalVector v1, final Color color,
+            final ThreeDimensionalVector v1, Color color,
             final ThreeDimensionalVector v2,
             final ThreeDimensionalVector v3,
             final double area,
-            List<TwoDimensionalVector> texture, double light,double[][] Zbuffer
+            List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer
     ) {
         final int x3x2 = x3 - x2;
         final int x3x1 = x3 - x1;
@@ -193,40 +174,41 @@ public class TriangleRasterization {
             }
 
 
+
             for (int x = l; x <= r; x++) {
 
 
+                BarycentricCoordinates barycentricCoordinates = new BarycentricCoordinates(
+                        new TwoDimensionalVector(v1.getA(), v1.getB()),
+                        new TwoDimensionalVector(v2.getA(), v2.getB()),
+                        new TwoDimensionalVector(v3.getA(), v3.getB()),
+                        new TwoDimensionalVector(x, y));
 
 //                   // final int colorBits = interpolateColor(x, y, v1, c1, v2, c2, v3, c3, area, texture);
 //
 //
 //                    p = new TwoDimensionalVector(x, y);
-//                    final double w1 = Math.abs(((NDimensionalVector) v2.subtraction(p)).crossMagnitude((NDimensionalVector) v2.subtraction(v3))) / area;
+
+
+
+//                System.out.println(Arrays.toString(texture.get(0).getArrValues()));
+//                System.out.println(Arrays.toString(texture.get(1).getArrValues()));
+//                System.out.println(Arrays.toString(texture.get(2).getArrValues()));
+
+                //    double PTcoordX =  Math.abs(texture.get(0).getA() * barycentricCoordinates.getU() + texture.get(1).getA() * barycentricCoordinates.getV()  +texture.get(2).getA() * barycentricCoordinates.getW()) / area;
+                //    double PTcoordY =  Math.abs(texture.get(0).getB() * barycentricCoordinates.getU() + texture.get(1).getB() * barycentricCoordinates.getV() + +texture.get(2).getB() * barycentricCoordinates.getW()) / area;
 //
-//                    final double w2 = Math.abs(((NDimensionalVector) v1.subtraction(p)).crossMagnitude((NDimensionalVector) v1.subtraction(v3))) / area;
+
+             //   System.out.println(Arrays.toString(texture.get(0).getArrValues()));
+                color = pixelReader.getColor(2000, 2300);
 //
-//                    final double w3 = Math.abs(((NDimensionalVector) v1.subtraction(p)).crossMagnitude((NDimensionalVector) v1.subtraction(v2))) / area;
-//
-//
-//                    int PTcoordX = (int) (texture.get(0).getA() * w1 + texture.get(1).getA() * w2 + +texture.get(2).getA() * w3);
-//                    int PTcoordY = (int) (texture.get(0).getB() * w1 + texture.get(1).getB() * w2 + +texture.get(2).getB() * w3);
-//
-//                try {
-//                    int pixelColor = image.getRGB(PTcoordX, PTcoordY);
-//
-//                    // Извлечение компонентов цвета
-//                    int alpha = (pixelColor >> 24) & 0xFF;
-//                    int red = (pixelColor >> 16) & 0xFF;
-//                    int green = (pixelColor >> 8) & 0xFF;
-//                    int blue = pixelColor & 0xFF;
+                //System.out.println(texture.get(0).getA() + " " +  texture.get(0).getB());
 
                 try {
-
-                    if(Zbuffer[x][y] > v1.getC()){
-                        pw.setColor(x, y, new Color(1 * (light), 0, 0, 1));
-                        Zbuffer[x][y] = v1.getC();
+                    if(zbuffer.bufferCheck(x, y,v1.getC())){
+                        double k = 0.5;
+                        pw.setColor(x,y, new Color(color.getRed()  * (1 - k  ) + color.getRed()  * light * k, color.getGreen()  * (1 - k  ) + color.getGreen()  * light * k, color.getBlue()  * (1 - k  ) + color.getBlue()  * light * k, 1));
                     }
-
                 }catch (Exception e){
                     //System.out.println(light);
                 }
@@ -285,5 +267,17 @@ public class TriangleRasterization {
         if (v < (float) 0.0) return (float) 0.0;
         if (v > (float) 1.0) return (float) 1.0;
         return v;
+    }
+    private static Color interpolateColor(double x, double y, List<TwoDimensionalVector> texture){
+        BarycentricCoordinates barycentricCoordinates = new BarycentricCoordinates(
+                new TwoDimensionalVector(texture.get(0).getA(), texture.get(0).getB()),
+                new TwoDimensionalVector(texture.get(1).getA(), texture.get(1).getB()),
+                new TwoDimensionalVector(texture.get(2).getA(), texture.get(2).getB()),
+                new TwoDimensionalVector(x, y));
+
+        double PTcoordX =  texture.get(0).getA() * barycentricCoordinates.getU() + texture.get(1).getA() * barycentricCoordinates.getV()  +texture.get(2).getA() * barycentricCoordinates.getW();
+        double PTcoordY =  texture.get(0).getB() * barycentricCoordinates.getU() + texture.get(1).getB() * barycentricCoordinates.getV() + +texture.get(2).getB() * barycentricCoordinates.getW();
+//
+        return pixelReader.getColor((int)(PTcoordX ), (int)(PTcoordY ));
     }
 }

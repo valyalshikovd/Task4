@@ -2,18 +2,12 @@ package com.cgvsu;
 
 import com.cgvsu.Math.Matrix.FourDimensionalMatrix;
 import com.cgvsu.Math.Matrix.NDimensionalMatrix;
-import com.cgvsu.Math.Vectors.FourDimensionalVector;
-import com.cgvsu.Math.Vectors.NDimensionalVector;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.render_engine.Camera;
 import com.cgvsu.render_engine.GraphicConveyor;
-import com.cgvsu.render_engine.RenderEngine;
-
-import javax.vecmath.Point2f;
-import java.util.Arrays;
 
 import static com.cgvsu.render_engine.GraphicConveyor.rotateScaleTranslate;
-import static com.cgvsu.render_engine.GraphicConveyor.vertexToPoint;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -43,10 +37,10 @@ public class Main {
         modelViewProjectionMatrix = (NDimensionalMatrix)  modelViewProjectionMatrix.multiplyMatrix(viewMatrix);
         modelViewProjectionMatrix = (NDimensionalMatrix)  modelViewProjectionMatrix.multiplyMatrix(projectionMatrix);
 
-        Point2f resultPoint = vertexToPoint(RenderEngine.multiplyMatrix4ByVector3(modelViewProjectionMatrix, new ThreeDimensionalVector(200, 3, 123)), 800, 800);
-        System.out.println(Arrays.toString(RenderEngine.multiplyMatrix4ByVector3(modelViewProjectionMatrix, new ThreeDimensionalVector(200, 3, 123)).getArrValues()));
-modelViewProjectionMatrix.printMatrix();
-        System.out.println(resultPoint);
+//        Point2f resultPoint = vertexToPoint(RenderEngine.multiplyMatrix4ByVector3(modelViewProjectionMatrix, new ThreeDimensionalVector(200, 3, 123)), 800, 800);
+//        System.out.println(Arrays.toString(RenderEngine.multiplyMatrix4ByVector3(modelViewProjectionMatrix, new ThreeDimensionalVector(200, 3, 123)).getArrValues()));
+//modelViewProjectionMatrix.printMatrix();
+//        System.out.println(resultPoint);
 
 
         System.out.println("-------------------");
