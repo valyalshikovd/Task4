@@ -63,4 +63,5 @@ public class Camera {
     private float aspectRatio;
     private float nearPlane;
     private float farPlane;
+
 }

@@ -9,16 +9,18 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="anchorPane" prefHeight="784.0" prefWidth="1485.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgvsu.GuiController">
-    <MenuBar prefHeight="26.0" prefWidth="1485.0">
+    <MenuBar prefHeight="26.0" prefWidth="218.0">
         <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" onAction="#onOpenModelMenuItemClick" text="Load Model">
                 <accelerator>
@@ -26,6 +28,7 @@
                 </accelerator>
             </MenuItem>
             <MenuItem mnemonicParsing="false" text="Save Model" />
+         <MenuItem mnemonicParsing="false" onAction="#onAddCameraMenuItemClick" text="Load Camera" />
         </Menu>
         <Menu mnemonicParsing="false" text="Camera Options">
             <MenuItem mnemonicParsing="false" onAction="#handleCameraForward" text="Forward">
@@ -59,6 +62,12 @@
                 </accelerator>
             </MenuItem>
         </Menu>
+      <Menu mnemonicParsing="false" text="Theme">
+         <items>
+            <RadioMenuItem fx:id="light" mnemonicParsing="false" onAction="#lightTheme" selected="true" text="Light" />
+            <RadioMenuItem fx:id="night" mnemonicParsing="false" onAction="#nightTheme" text="Night" />
+         </items>
+      </Menu>
     </MenuBar>
 
     <Canvas fx:id="canvas" height="553.0" width="1173.0" AnchorPane.topAnchor="30.0" />
@@ -66,7 +75,10 @@
         <tabs>
             <Tab text="Terminal">
                 <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="264.0" prefWidth="346.0" />
+                    <AnchorPane fx:id="terminal" minHeight="0.0" minWidth="0.0" prefHeight="264.0" prefWidth="346.0">
+                  <children>
+                     <TextArea fx:id="terminalText" layoutX="-5.0" layoutY="1.0" prefHeight="283.0" prefWidth="762.0" />
+                  </children></AnchorPane>
                 </content>
             </Tab>
             <Tab text="Loaded models">
@@ -78,9 +90,36 @@
                     </AnchorPane>
                 </content>
             </Tab>
+         <Tab text="Loaded cameras">
+           <content>
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <ListView fx:id="listViewCameras" layoutX="8.0" layoutY="-1.0" onMouseClicked="#cameraSelected" prefHeight="284.0" prefWidth="752.0" />
+                  </children>
+               </AnchorPane>
+           </content>
+         </Tab>
+         <Tab text="Loaded lights">
+           <content>
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <ListView fx:id="listViewLights" layoutY="-1.0" prefHeight="281.0" prefWidth="752.0" />
+                  </children>
+               </AnchorPane>
+           </content>
+         </Tab>
+         <Tab text="Loaded textures">
+           <content>
+             <AnchorPane fx:id="loadedTextures" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <ListView layoutX="-3.0" layoutY="-2.0" prefHeight="285.0" prefWidth="758.0" />
+                  </children>
+               </AnchorPane>
+           </content>
+         </Tab>
         </tabs>
     </TabPane>
-    <TabPane fx:id="mainPanel" layoutY="25.0" prefHeight="874.0" prefWidth="300.0" side="LEFT" stylesheets="@style.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.rightAnchor="10.0">
+    <TabPane fx:id="mainPanel" prefHeight="899.0" prefWidth="306.0" side="LEFT" stylesheets="@style.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.rightAnchor="4.0">
         <tabs>
             <Tab text="Move">
                 <content>
@@ -179,26 +218,70 @@
                                     <Font size="18.0" />
                                 </font>
                             </Label>
-                     <ColorPicker fx:id="colorpick" layoutX="121.0" layoutY="101.0" prefHeight="26.0" prefWidth="125.0" />
+                            <ColorPicker fx:id="colorpick" layoutX="121.0" layoutY="101.0" prefHeight="26.0" prefWidth="125.0" />
                         </children></AnchorPane>
                 </content>
             </Tab>
-            <Tab text="Theme">
-                <content>
-                    <AnchorPane fx:id="sliderTheme2" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                        <children>
-                            <Label layoutX="64.0" layoutY="45.0" text="Background theme">
-                                <font>
-                                    <Font size="18.0" />
-                                </font>
-                            </Label>
-                            <Slider fx:id="sliderTheme" layoutX="66.0" layoutY="109.0" prefHeight="14.0" prefWidth="147.0" />
-                            <Label layoutX="34.0" layoutY="107.0" text="Day" />
-                            <Label layoutX="218.0" layoutY="107.0" text="Night" />
-                        </children>
-                    </AnchorPane>
-                </content>
-            </Tab>
+         <Tab text="Light">
+           <content>
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <Label layoutX="89.0" layoutY="50.0" text="Load a light">
+                        <font>
+                           <Font size="18.0" />
+                        </font>
+                     </Label>
+                     <TextField layoutX="75.0" layoutY="112.0" />
+                     <TextField layoutX="75.0" layoutY="174.0" />
+                     <TextField layoutX="75.0" layoutY="241.0" />
+                     <Label layoutX="40.0" layoutY="115.0" text="X:">
+                        <font>
+                           <Font size="14.0" />
+                        </font>
+                     </Label>
+                     <Label layoutX="40.0" layoutY="177.0" text="Y:">
+                        <font>
+                           <Font size="14.0" />
+                        </font>
+                     </Label>
+                     <Label layoutX="40.0" layoutY="244.0" text="Z:">
+                        <font>
+                           <Font size="14.0" />
+                        </font>
+                     </Label>
+                     <Button layoutX="107.0" layoutY="295.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="57.0" text="Add" />
+                  </children>
+               </AnchorPane>
+           </content>
+         </Tab>
         </tabs>
     </TabPane>
+   <AnchorPane fx:id="addCamerasPane" layoutX="462.0" layoutY="262.0" prefHeight="200.0" prefWidth="529.0" styleClass="my-anchor-pane" stylesheets="@style.css" visible="false">
+      <children>
+         <Label layoutX="209.0" layoutY="14.0" text="Add a camera">
+            <font>
+               <Font name="Franklin Gothic Medium" size="18.0" />
+            </font>
+         </Label>
+         <Button layoutX="482.0" layoutY="1.0" mnemonicParsing="false" onAction="#closeCameraPane" prefHeight="26.0" prefWidth="48.0" text="X" textFill="RED" />
+         <Button layoutX="482.0" layoutY="173.0" mnemonicParsing="false" onAction="#okCameraPane" prefHeight="26.0" prefWidth="48.0" text="OK" textFill="RED" />
+         <TextField fx:id="nameOfCamera" layoutX="21.0" layoutY="122.0" />
+         <TextField layoutX="214.0" layoutY="121.0" prefHeight="26.0" prefWidth="66.0" fx:id="xCamera" />
+         <TextField fx:id="yCamera" layoutX="430.0" layoutY="121.0" prefHeight="26.0" prefWidth="66.0" />
+         <TextField fx:id="zCamera" layoutX="324.0" layoutY="121.0" prefHeight="26.0" prefWidth="66.0" />
+         <Label layoutX="21.0" layoutY="82.0" text="Name of camera">
+            <font>
+               <Font size="14.0" />
+            </font>
+         </Label>
+         <Label layoutX="204.0" layoutY="126.0" text="X:" />
+         <Label layoutX="314.0" layoutY="126.0" text="Y:" />
+         <Label layoutX="420.0" layoutY="126.0" text="Z:" />
+      </children>
+   </AnchorPane>
+   <Text layoutX="167.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0">
+      <font>
+         <Font name="Book Antiqua" size="12.0" />
+      </font>
+   </Text>
 </AnchorPane>

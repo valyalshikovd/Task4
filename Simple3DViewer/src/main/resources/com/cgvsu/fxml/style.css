@@ -5,3 +5,10 @@
 .tab-pane .tab {
     -fx-background-color: rgba(150, 94, 94, 0.79);
 }
+
+
+.my-anchor-pane {
+    -fx-background-color: rgba(135, 156, 161, 0.79);
+    -fx-border-radius: 10px; /* Радиус закругления */
+    -fx-background-radius: 10px; /* Радиус закругления фона */
+}
