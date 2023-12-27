@@ -6,6 +6,9 @@ import com.cgvsu.Math.Vectors.TwoDimensionalVector;
 import com.cgvsu.render_engine.Zbuffer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+
+import javax.vecmath.Vector2f;
+import javax.vecmath.Vector3f;
 import java.util.*;
 import java.util.List;
 
@@ -41,6 +44,7 @@ public class Model {
         this.normals = normals;
         this.polygons = polygons;
     }
+
 
 
     public void changeModel(NDimensionalMatrix modelViewProjectionMatrix){
@@ -85,5 +89,19 @@ public class Model {
         return new ThreeDimensionalVector(x/w, y/w, z/w);
     }
 
+    public ArrayList<Polygon> getPolygons() {
+        return polygons;
+    }
 
+    public ArrayList<ThreeDimensionalVector> getVertices() {
+        return vertices;
+    }
+
+    public ArrayList<TwoDimensionalVector> getTextureVertices() {
+        return textureVertices;
+    }
+
+    public ArrayList<ThreeDimensionalVector> getNormals() {
+        return normals;
+    }
 }

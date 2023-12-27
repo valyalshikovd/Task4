@@ -1,12 +1,14 @@
 package com.cgvsu;
 
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
+import com.cgvsu.Parser.Parser;
+import com.cgvsu.deleter.DeleterVertices;
+import com.cgvsu.deleter.PolygonsDeleter;
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.Scene;
 import com.cgvsu.terminal.Terminal;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -15,22 +17,14 @@ import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
-import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
@@ -44,8 +38,6 @@ import java.util.Objects;
 import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.render_engine.Camera;
-
-import javax.vecmath.Vector3f;
 
 public class GuiController {
 
@@ -85,6 +77,10 @@ public class GuiController {
     public TextField xlight;
     public TextField ylight;
     public TextField zlight;
+    public Button deleter;
+    public TextField verticesToDeleteField;
+    public TextField polygonsToDeleteField;
+    public CheckBox checkFreeVertices;
 
 
     @FXML
@@ -99,6 +95,8 @@ public class GuiController {
 
     private Model mesh = null;
     private Scene scene;
+
+
 
     private ObservableList<String> items = FXCollections.observableArrayList();
     @FXML
@@ -303,6 +301,19 @@ public class GuiController {
         listViewLights.setStyle("-fx-control-inner-background: #ffffff;");
 
 
+    }
+
+    public void deleterVertices () {
+        String listOfVerticesToDelete = verticesToDeleteField.getText();
+        List<Integer> verticesToDelete = Parser.parsing(listOfVerticesToDelete);
+        DeleterVertices.removeVerticesFromModel(scene.getLoadedModels().get(scene.currentModelName), verticesToDelete);
+    }
+    public void deleterPolygons() {
+        String listOfPolygonsToDelete = polygonsToDeleteField.getText();
+        List<Integer> polygonsToDelete = Parser.parsing(listOfPolygonsToDelete);
+        boolean vrt = checkFreeVertices.isSelected();
+        assert polygonsToDelete != null;
+        PolygonsDeleter.deletePolygons(scene.getLoadedModels().get(scene.currentModelName), polygonsToDelete, vrt);
     }
 
     //работа с камерой

@@ -77,7 +77,7 @@
       </cursor>
     </MenuBar>
 
-    <Canvas fx:id="canvas" height="553.0" width="1173.0" AnchorPane.topAnchor="30.0" />
+                      <Canvas fx:id="canvas" height="553.0" width="1173.0" AnchorPane.topAnchor="30.0" />
     <TabPane blendMode="DARKEN" layoutX="1.0" layoutY="588.0" prefHeight="310.0" prefWidth="757.0" stylesheets="@style.css" tabClosingPolicy="UNAVAILABLE">
         <tabs>
             <Tab text="Terminal">
@@ -132,6 +132,62 @@
          <Cursor fx:constant="HAND" />
       </cursor>
     </TabPane>
+   <AnchorPane fx:id="addCamerasPane" layoutX="462.0" layoutY="262.0" prefHeight="200.0" prefWidth="529.0" styleClass="my-anchor-pane" stylesheets="@style.css" visible="false">
+      <children>
+         <Label layoutX="209.0" layoutY="14.0" text="Add a camera">
+            <font>
+               <Font name="Franklin Gothic Medium" size="18.0" />
+            </font>
+         </Label>
+         <Button layoutX="482.0" layoutY="1.0" mnemonicParsing="false" onAction="#closeCameraPane" prefHeight="26.0" prefWidth="48.0" text="X" textFill="RED" />
+         <Button layoutX="482.0" layoutY="173.0" mnemonicParsing="false" onAction="#okCameraPane" prefHeight="26.0" prefWidth="48.0" text="OK" textFill="RED" />
+         <TextField fx:id="nameOfCamera" layoutX="21.0" layoutY="122.0" />
+         <TextField layoutX="214.0" layoutY="121.0" prefHeight="26.0" prefWidth="66.0" fx:id="xCamera" />
+         <TextField fx:id="yCamera" layoutX="430.0" layoutY="121.0" prefHeight="26.0" prefWidth="66.0" />
+         <TextField fx:id="zCamera" layoutX="324.0" layoutY="121.0" prefHeight="26.0" prefWidth="66.0" />
+         <Label layoutX="21.0" layoutY="82.0" text="Name of camera">
+            <font>
+               <Font size="14.0" />
+            </font>
+         </Label>
+         <Label layoutX="204.0" layoutY="126.0" text="X:" />
+         <Label layoutX="314.0" layoutY="126.0" text="Y:" />
+         <Label layoutX="420.0" layoutY="126.0" text="Z:" />
+      </children>
+   </AnchorPane>
+   <Text layoutX="167.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0">
+      <font>
+         <Font name="Book Antiqua" size="12.0" />
+      </font>
+   </Text>
+   <Button fx:id="buttonLeft" layoutX="702.0" layoutY="526.0" mnemonicParsing="false" onAction="#handleCameraLeft" opacity="0.51" styleClass="my-button" stylesheets="@style.css" text="&gt;">
+      <effect>
+         <Lighting>
+            <bumpInput>
+               <InnerShadow />
+            </bumpInput>
+            <light>
+               <Light.Distant />
+            </light>
+         </Lighting>
+      </effect>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></Button>
+   <Button fx:id="buttonRight" layoutX="551.0" layoutY="526.0" mnemonicParsing="false" onAction="#handleCameraRight" opacity="0.5" styleClass="my-button" stylesheets="@style.css" text="&lt;">
+      <effect>
+         <Lighting>
+            <bumpInput>
+               <InnerShadow />
+            </bumpInput>
+            <light>
+               <Light.Distant />
+            </light>
+         </Lighting>
+      </effect>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></Button>
     <TabPane fx:id="mainPanel" prefHeight="899.0" prefWidth="306.0" side="LEFT" stylesheets="@style.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.rightAnchor="4.0">
         <tabs>
             <Tab text="Move">
@@ -232,7 +288,7 @@
                                 </font>
                             </Label>
                             <ColorPicker fx:id="colorpick" layoutX="121.0" layoutY="101.0" prefHeight="26.0" prefWidth="125.0" />
-                     <CheckBox fx:id="texturesCheckBox" layoutX="46.0" layoutY="196.0" mnemonicParsing="false" text="Textures" onAction="#handleTexture">
+                     <CheckBox fx:id="texturesCheckBox" layoutX="46.0" layoutY="196.0" mnemonicParsing="false" onAction="#handleTexture" text="Textures">
                         <font>
                            <Font size="18.0" />
                         </font>
@@ -249,7 +305,7 @@
                            <Font size="18.0" />
                         </font>
                      </Label>
-                     <TextField fx:id="xlight" layoutX="75.0" layoutY="112.0" />
+                     <TextField layoutX="75.0" layoutY="112.0" fx:id="xlight" />
                      <TextField fx:id="ylight" layoutX="75.0" layoutY="174.0" />
                      <TextField fx:id="zlight" layoutX="75.0" layoutY="241.0" />
                      <Label layoutX="40.0" layoutY="115.0" text="X:">
@@ -267,7 +323,29 @@
                            <Font size="14.0" />
                         </font>
                      </Label>
-                     <Button fx:id="buttonLight" layoutX="107.0" layoutY="295.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="57.0" text="Add" onAction="#addLight" />
+                     <Button fx:id="buttonLight" layoutX="107.0" layoutY="295.0" mnemonicParsing="false" onAction="#addLight" prefHeight="26.0" prefWidth="57.0" text="Add" />
+                  </children>
+               </AnchorPane>
+           </content>
+         </Tab>
+         <Tab text="Deleter">
+           <content>
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <Button fx:id="deleter" layoutX="201.0" layoutY="117.0" mnemonicParsing="false" onAction="#deleterVertices" text="Delete" />
+                     <TextField fx:id="verticesToDeleteField" layoutX="24.0" layoutY="117.0" />
+                     <Label layoutX="52.0" layoutY="62.0" text="Add vertices to delete">
+                        <font>
+                           <Font size="18.0" />
+                        </font></Label>
+                     <Label layoutX="46.0" layoutY="197.0" text="Add polygons to delete">
+                        <font>
+                           <Font size="18.0" />
+                        </font>
+                     </Label>
+                     <Button layoutX="201.0" layoutY="262.0" mnemonicParsing="false" onAction="#deleterPolygons" text="Delete" />
+                     <TextField fx:id="polygonsToDeleteField" layoutX="24.0" layoutY="288.0" />
+                     <CheckBox fx:id="checkFreeVertices" layoutX="24.0" layoutY="254.0" mnemonicParsing="false" text="free vertices" />
                   </children>
                </AnchorPane>
            </content>
@@ -280,60 +358,4 @@
          <Cursor fx:constant="HAND" />
       </cursor>
     </TabPane>
-   <AnchorPane fx:id="addCamerasPane" layoutX="462.0" layoutY="262.0" prefHeight="200.0" prefWidth="529.0" styleClass="my-anchor-pane" stylesheets="@style.css" visible="false">
-      <children>
-         <Label layoutX="209.0" layoutY="14.0" text="Add a camera">
-            <font>
-               <Font name="Franklin Gothic Medium" size="18.0" />
-            </font>
-         </Label>
-         <Button layoutX="482.0" layoutY="1.0" mnemonicParsing="false" onAction="#closeCameraPane" prefHeight="26.0" prefWidth="48.0" text="X" textFill="RED" />
-         <Button layoutX="482.0" layoutY="173.0" mnemonicParsing="false" onAction="#okCameraPane" prefHeight="26.0" prefWidth="48.0" text="OK" textFill="RED" />
-         <TextField fx:id="nameOfCamera" layoutX="21.0" layoutY="122.0" />
-         <TextField layoutX="214.0" layoutY="121.0" prefHeight="26.0" prefWidth="66.0" fx:id="xCamera" />
-         <TextField fx:id="yCamera" layoutX="430.0" layoutY="121.0" prefHeight="26.0" prefWidth="66.0" />
-         <TextField fx:id="zCamera" layoutX="324.0" layoutY="121.0" prefHeight="26.0" prefWidth="66.0" />
-         <Label layoutX="21.0" layoutY="82.0" text="Name of camera">
-            <font>
-               <Font size="14.0" />
-            </font>
-         </Label>
-         <Label layoutX="204.0" layoutY="126.0" text="X:" />
-         <Label layoutX="314.0" layoutY="126.0" text="Y:" />
-         <Label layoutX="420.0" layoutY="126.0" text="Z:" />
-      </children>
-   </AnchorPane>
-   <Text layoutX="167.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0">
-      <font>
-         <Font name="Book Antiqua" size="12.0" />
-      </font>
-   </Text>
-   <Button fx:id="buttonLeft" layoutX="702.0" layoutY="526.0" mnemonicParsing="false" onAction="#handleCameraLeft" opacity="0.51" styleClass="my-button" stylesheets="@style.css" text="&gt;">
-      <effect>
-         <Lighting>
-            <bumpInput>
-               <InnerShadow />
-            </bumpInput>
-            <light>
-               <Light.Distant />
-            </light>
-         </Lighting>
-      </effect>
-      <cursor>
-         <Cursor fx:constant="HAND" />
-      </cursor></Button>
-   <Button fx:id="buttonRight" layoutX="551.0" layoutY="526.0" mnemonicParsing="false" onAction="#handleCameraRight" opacity="0.5" styleClass="my-button" stylesheets="@style.css" text="&lt;">
-      <effect>
-         <Lighting>
-            <bumpInput>
-               <InnerShadow />
-            </bumpInput>
-            <light>
-               <Light.Distant />
-            </light>
-         </Lighting>
-      </effect>
-      <cursor>
-         <Cursor fx:constant="HAND" />
-      </cursor></Button>
 </AnchorPane>
