@@ -62,10 +62,15 @@ public class TriangleRasterization {
             final double area, List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer
     ) {
 
-            Color color1 = pixelReader.getColor((int) (texture.get(0).getA() * 4095), (int) (texture.get(0).getB() * 4095));
-            Color color2 = pixelReader.getColor((int) (texture.get(1).getA() * 4095), (int) (texture.get(1).getB() * 4095));
-            Color color3 = pixelReader.getColor((int) (texture.get(2).getA() * 4095), (int) (texture.get(2).getB() * 4095));
+        Color color1 = null;
+        Color color2 = null;
+        Color color3 = null;
 
+        if(!texture.isEmpty() ) {
+            color1 = pixelReader.getColor((int) (texture.get(0).getA() * 4095), (int) (texture.get(0).getB() * 4095));
+            color2 = pixelReader.getColor((int) (texture.get(1).getA() * 4095), (int) (texture.get(1).getB() * 4095));
+            color3 = pixelReader.getColor((int) (texture.get(2).getA() * 4095), (int) (texture.get(2).getB() * 4095));
+        }
         final int x2x1 = x2 - x1;
         final int x3x1 = x3 - x1;
         final int y2y1 = y2 - y1;
@@ -125,13 +130,22 @@ public class TriangleRasterization {
             List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer
     ) {
 
-        Color color1 = pixelReader.getColor((int) (texture.get(0).getA() * 4095), (int) (texture.get(0).getB() * 4095));
-        Color color2 = pixelReader.getColor((int) (texture.get(1).getA() * 4095), (int) (texture.get(1).getB() * 4095));
-        Color color3 = pixelReader.getColor((int) (texture.get(2).getA() * 4095), (int) (texture.get(2).getB() * 4095));
+        Color color1 = null;
+        Color color2 = null;
+        Color color3 = null;
+
+        if(!texture.isEmpty() ) {
+            color1 = pixelReader.getColor((int) (texture.get(0).getA() * 4095), (int) (texture.get(0).getB() * 4095));
+            color2 = pixelReader.getColor((int) (texture.get(1).getA() * 4095), (int) (texture.get(1).getB() * 4095));
+            color3 = pixelReader.getColor((int) (texture.get(2).getA() * 4095), (int) (texture.get(2).getB() * 4095));
+        }
         final int x3x2 = x3 - x2;
         final int x3x1 = x3 - x1;
         final int y3y2 = y3 - y2;
         final int y3y1 = y3 - y1;
+
+
+
 
         if (y3y2 == 0 || y3y1 == 0) return;
         for (int y = y2; y <= y3; y++) {
