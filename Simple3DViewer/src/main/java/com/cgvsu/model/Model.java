@@ -5,6 +5,8 @@ import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Math.Vectors.TwoDimensionalVector;
 import com.cgvsu.render_engine.Zbuffer;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 
 import javax.vecmath.Vector2f;
@@ -34,6 +36,8 @@ public class Model {
     public boolean isFill;
     public boolean isTextured = false;
 
+    public Image image = null;
+
 
     public Model(ArrayList<ThreeDimensionalVector> vertices,
                  ArrayList<TwoDimensionalVector> textureVertices,
@@ -60,6 +64,11 @@ public class Model {
     public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height, HashMap< String, ThreeDimensionalVector> light , Zbuffer zbuffer){
         List<Polygon> currPoligons = polygons;
         changeModel(modelViewProjectionMatrix);
+        PixelReader pixelReader = null;
+        if (image != null){
+            pixelReader = image.getPixelReader();
+        }
+
         if(isTriangulate || fillingColor == null){
             currPoligons = triangulate();
         }
@@ -71,9 +80,10 @@ public class Model {
                     isFill,
                     light,
                     zbuffer,
-                    isTextured);
+                    isTextured, pixelReader);
         }
     }
+
     public boolean isEmpty() {
         return vertices.isEmpty();
     }

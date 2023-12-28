@@ -6,6 +6,7 @@ import com.cgvsu.Math.Vectors.TwoDimensionalVector;
 import com.cgvsu.Rasterization.TriangleRasterization;
 import com.cgvsu.render_engine.Zbuffer;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class Polygon {
                             Color fillingColor,
                             boolean isFill,
                             HashMap< String, ThreeDimensionalVector> light,
-                            Zbuffer zbuffer, boolean isTexturing){
+                            Zbuffer zbuffer, boolean isTexturing, PixelReader pixelReader){
 
 
         ArrayList<ThreeDimensionalVector> resultPoints = new ArrayList<>();
@@ -70,7 +71,7 @@ public class Polygon {
 
             resultPoints.add(new ThreeDimensionalVector(vertex.getA(), vertex.getB(), vertex.getC()));
 
-            if(isTexturing){
+            if(isTexturing && mesh.image != null){
                 textureVertexes.add(mesh.textureVertices.get(textureVertexIndices.get(vertexInPolygonInd)));
             }
         }
@@ -85,7 +86,7 @@ public class Polygon {
                     fillingColor,
                     textureVertexes,
                     lightCoefficient,
-                    zbuffer);
+                    zbuffer, pixelReader);
             textureVertexes.clear();
         }else {
             drawingPolygonNet(g, resultPoints);

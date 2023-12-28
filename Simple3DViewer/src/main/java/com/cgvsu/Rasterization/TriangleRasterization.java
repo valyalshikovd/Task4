@@ -15,9 +15,7 @@ import java.util.List;
 
 public class TriangleRasterization {
 
-    static Image image = new Image("C:\\Users\\wda11\\IdeaProjects\\Task4\\Simple3DViewer\\src\\main\\resources\\texture\\NeutralWrapped.jpg");
-    static PixelReader pixelReader = image.getPixelReader();
-
+   // static Image image = new Image("C:\\Users\\Ulianadev\\IdeaProjects\\Task4Result\\Simple3DViewer\\src\\main\\resources\\texture\\NeutralWrapped.jpg");
     private static final Comparator<ThreeDimensionalVector> COMPARATOR = (a, b) -> {
         int cmp = Double.compare(a.getB(), b.getB());
         if (cmp != 0) {
@@ -35,7 +33,8 @@ public class TriangleRasterization {
             final Color color,
             List<TwoDimensionalVector> texture,
             double lightCoefficient,
-            Zbuffer zbuffer
+            Zbuffer zbuffer,
+            PixelReader pixelReader
     ) {
         final var verts = new ThreeDimensionalVector[]{v1, v2, v3};
         Arrays.sort(verts, COMPARATOR);
@@ -47,8 +46,8 @@ public class TriangleRasterization {
         final int y3 = (int) verts[2].getB();
 
         final double area = Math.abs(((NDimensionalVector) v1.subtraction(v2)).crossMagnitude((NDimensionalVector) v1.subtraction(v3)));
-        drawTopTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, lightCoefficient, zbuffer);
-        drawBottomTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, lightCoefficient, zbuffer);
+        drawTopTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, lightCoefficient, zbuffer, pixelReader);
+        drawBottomTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, lightCoefficient, zbuffer, pixelReader);
     }
 
     private static void drawTopTriangle(
@@ -59,7 +58,7 @@ public class TriangleRasterization {
             final ThreeDimensionalVector v1, Color color,
             final ThreeDimensionalVector v2,
             final ThreeDimensionalVector v3,
-            final double area, List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer
+            final double area, List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer, PixelReader pixelReader
     ) {
 
         Color color1 = null;
@@ -127,7 +126,7 @@ public class TriangleRasterization {
             final ThreeDimensionalVector v2,
             final ThreeDimensionalVector v3,
             final double area,
-            List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer
+            List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer, PixelReader pixelReader
     ) {
 
         Color color1 = null;

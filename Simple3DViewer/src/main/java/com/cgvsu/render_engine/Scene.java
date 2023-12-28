@@ -32,6 +32,7 @@ public class Scene {
     private Zbuffer zbuffer;
 
 
+
     public Map<String, ThreeDimensionalVector> getLightSources() {
         return lightSources;
     }
@@ -57,6 +58,7 @@ public class Scene {
         Path fileName = Path.of("C:/Users/770vd//Desktop/WrapHead.obj");
 
     }
+
 
     public Map<String, Camera> getAddedCameras() {
         return addedCameras;
@@ -116,6 +118,8 @@ public class Scene {
     public Camera getCamera() {
         return camera;
     }
+
+
 
 
 

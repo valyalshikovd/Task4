@@ -19,8 +19,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -66,7 +68,6 @@ public class GuiController {
     public TextField yCamera;
     public TextField zCamera;
     public TextField nameOfCamera;
-    public AnchorPane loadedTextures;
     public ListView listViewLights;
     public AnchorPane terminal;
     public TextArea terminalText;
@@ -81,6 +82,7 @@ public class GuiController {
     public TextField verticesToDeleteField;
     public TextField polygonsToDeleteField;
     public CheckBox checkFreeVertices;
+    public Text texturesIsLoaded;
 
 
     @FXML
@@ -143,6 +145,7 @@ public class GuiController {
 
         timeline.getKeyFrames().add(frame);
         timeline.play();
+        texturesIsLoaded.setText("The texture is not loaded.");
 
     }
 
@@ -157,7 +160,6 @@ public class GuiController {
         if (file == null) {
             return;
         }
-
 
         Path fileName = Path.of(file.getAbsolutePath());
 
@@ -197,6 +199,30 @@ public class GuiController {
         terminalWrite.logModelLoading(path);
 
     }
+
+    @FXML
+    private void onOpenTextureClick() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image (*.png, *.jpg, *.jpeg)", "*.png", "*.jpg", "*.jpeg"));
+        fileChooser.setTitle("Load Image");
+
+        File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
+        if (file == null) {
+            return;
+        }
+
+        Image image = new Image(file.toURI().toString());
+        scene.getLoadedModels().get(scene.currentModelName).image = image;
+        texturesIsLoaded.setText("The texture is loaded.");
+
+    }
+
+    public void deleteTexture(){
+        Image image = null;
+        scene.getLoadedModels().get(scene.currentModelName).image = image;
+        texturesIsLoaded.setText("The texture is not loaded.");
+    }
+
 
     @FXML
     public void handleCameraForward(ActionEvent actionEvent) {
