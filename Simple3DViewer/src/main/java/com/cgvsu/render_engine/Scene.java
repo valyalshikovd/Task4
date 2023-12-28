@@ -27,17 +27,17 @@ public class Scene {
     private Map<String, Camera> addedCameras = new HashMap<>();
     private Map<String, Model> loadedModels = new HashMap<>();
     private Map<String, Image> loadedTextures = new HashMap<>();
-    private Map<String, ThreeDimensionalVector> lightSourses = new HashMap<>();
+    private Map<String, ThreeDimensionalVector> lightSources = new HashMap<>();
 
     private Zbuffer zbuffer;
 
 
-    public Map<String, ThreeDimensionalVector> getLightSourses() {
-        return lightSourses;
+    public Map<String, ThreeDimensionalVector> getLightSources() {
+        return lightSources;
     }
 
     public Scene(Camera camera, int width, int height) {
-        lightSourses.put("default ", new ThreeDimensionalVector(30,10,1));
+        lightSources.put("default ", new ThreeDimensionalVector(30,10,1));
         this.camera = camera;
         this.width = width;
         this.height = height;
@@ -77,10 +77,9 @@ public class Scene {
         this.modelViewProjectionMatrix = modelMatrix;
         modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(viewMatrix);
         this.modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(projectionMatrix);
-
-
-
     }
+
+
     public void setWidth(int width) {
         this.width = width;
     }
@@ -102,12 +101,11 @@ public class Scene {
         zbuffer.clearBuffer();
 
         for (String model : loadedModels.keySet()) {
-            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, (HashMap<String, ThreeDimensionalVector>) lightSourses, zbuffer);
+            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, (HashMap<String, ThreeDimensionalVector>) lightSources, zbuffer);
         }
     }
 
     public void setCurrentCamera(Camera camera) {
-        // this.camera = camera;
         setCamera(camera, width,height);
     }
 

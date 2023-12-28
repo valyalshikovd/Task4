@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -61,6 +62,10 @@ public class TriangleRasterization {
             final double area, List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer
     ) {
 
+            Color color1 = pixelReader.getColor((int) (texture.get(0).getA() * 4095), (int) (texture.get(0).getB() * 4095));
+            Color color2 = pixelReader.getColor((int) (texture.get(1).getA() * 4095), (int) (texture.get(1).getB() * 4095));
+            Color color3 = pixelReader.getColor((int) (texture.get(2).getA() * 4095), (int) (texture.get(2).getB() * 4095));
+
         final int x2x1 = x2 - x1;
         final int x3x1 = x3 - x1;
         final int y2y1 = y2 - y1;
@@ -75,16 +80,12 @@ public class TriangleRasterization {
                 r = tmp;
             }
             for (int x = l; x <= r + 1; x++) {
-
-
-                if(!texture.isEmpty()){
+                Color currentColor = null;
+                if (!texture.isEmpty()) {
                     p = new TwoDimensionalVector(x, y);
                     final double w1 = Math.abs(((NDimensionalVector) new TwoDimensionalVector(v2.getA(), v2.getB()).subtraction(p)).crossMagnitude((NDimensionalVector) new TwoDimensionalVector(v2.getA(), v2.getB()).subtraction(new TwoDimensionalVector(v3.getA(), v3.getB())))) / area;
                     final double w2 = Math.abs(((NDimensionalVector) new TwoDimensionalVector(v1.getA(), v1.getB()).subtraction(p)).crossMagnitude((NDimensionalVector) new TwoDimensionalVector(v1.getA(), v1.getB()).subtraction(new TwoDimensionalVector(v3.getA(), v3.getB())))) / area;
                     final double w3 = Math.abs(((NDimensionalVector) new TwoDimensionalVector(v1.getA(), v1.getB()).subtraction(p)).crossMagnitude((NDimensionalVector) new TwoDimensionalVector(v1.getA(), v1.getB()).subtraction(new TwoDimensionalVector(v2.getA(), v2.getB())))) / area;
-                    Color color1 = pixelReader.getColor((int) (texture.get(0).getA() * 4095), (int) (texture.get(0).getB() * 4095));
-                    Color color2 = pixelReader.getColor((int) (texture.get(1).getA() * 4095), (int) (texture.get(1).getB() * 4095));
-                    Color color3 = pixelReader.getColor((int) (texture.get(2).getA() * 4095), (int) (texture.get(2).getB() * 4095));
                     final double red = clamp(((w1 * color1.getRed())
                             + (w2 * color2.getRed())
                             + (w3 * color3.getRed())));
@@ -94,11 +95,15 @@ public class TriangleRasterization {
                     final double blue = clamp(((w1 * color1.getBlue())
                             + (w2 * color2.getBlue())
                             + (w3 * color3.getBlue())));
-                    color = new Color(red, green, blue, 1);
+                    if(red == 1 || green == 1 || blue == 1 || red == 0 || green == 0 || blue == 0){
+                        color = color1;
+                    }else{
+                        color = new Color(red, green, blue, 1);
+                    }
                 }
                 try {
                     if (zbuffer.bufferCheck(x, y, v1.getC())) {
-                        double k = 0.5;
+                        double k = 0.8;
                         pw.setColor(x, y, new Color(color.getRed() * (1 - k) + color.getRed() * light * k, color.getGreen() * (1 - k) + color.getGreen() * light * k, color.getBlue() * (1 - k) + color.getBlue() * light * k, 1));
                     }
                 } catch (Exception ignored) {
@@ -107,6 +112,7 @@ public class TriangleRasterization {
             }
         }
     }
+
     private static void drawBottomTriangle(
             final PixelWriter pw,
             final int x1, final int y1,
@@ -118,6 +124,10 @@ public class TriangleRasterization {
             final double area,
             List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer
     ) {
+
+        Color color1 = pixelReader.getColor((int) (texture.get(0).getA() * 4095), (int) (texture.get(0).getB() * 4095));
+        Color color2 = pixelReader.getColor((int) (texture.get(1).getA() * 4095), (int) (texture.get(1).getB() * 4095));
+        Color color3 = pixelReader.getColor((int) (texture.get(2).getA() * 4095), (int) (texture.get(2).getB() * 4095));
         final int x3x2 = x3 - x2;
         final int x3x1 = x3 - x1;
         final int y3y2 = y3 - y2;
@@ -132,16 +142,14 @@ public class TriangleRasterization {
                 l = r;
                 r = tmp;
             }
+            Color currentColor = null;
             for (int x = l; x <= r + 1; x++) {
-                if(!texture.isEmpty()){
+                if (!texture.isEmpty()) {
                     p = new TwoDimensionalVector(x, y);
                     final double w1 = Math.abs(((NDimensionalVector) new TwoDimensionalVector(v2.getA(), v2.getB()).subtraction(p)).crossMagnitude((NDimensionalVector) new TwoDimensionalVector(v2.getA(), v2.getB()).subtraction(new TwoDimensionalVector(v3.getA(), v3.getB())))) / area;
                     final double w2 = Math.abs(((NDimensionalVector) new TwoDimensionalVector(v1.getA(), v1.getB()).subtraction(p)).crossMagnitude((NDimensionalVector) new TwoDimensionalVector(v1.getA(), v1.getB()).subtraction(new TwoDimensionalVector(v3.getA(), v3.getB())))) / area;
                     final double w3 = Math.abs(((NDimensionalVector) new TwoDimensionalVector(v1.getA(), v1.getB()).subtraction(p)).crossMagnitude((NDimensionalVector) new TwoDimensionalVector(v1.getA(), v1.getB()).subtraction(new TwoDimensionalVector(v2.getA(), v2.getB())))) / area;
 
-                    Color color1 = pixelReader.getColor((int) (texture.get(0).getA() * 4095), (int) (texture.get(0).getB() * 4095));
-                    Color color2 = pixelReader.getColor((int) (texture.get(1).getA() * 4095), (int) (texture.get(1).getB() * 4095));
-                    Color color3 = pixelReader.getColor((int) (texture.get(2).getA() * 4095), (int) (texture.get(2).getB() * 4095));
                     final double red = clamp(((w1 * color1.getRed())
                             + (w2 * color2.getRed())
                             + (w3 * color3.getRed())));
@@ -151,21 +159,30 @@ public class TriangleRasterization {
                     final double blue = clamp(((w1 * color1.getBlue())
                             + (w2 * color2.getBlue())
                             + (w3 * color3.getBlue())));
-                    color = new Color(red, green, blue, 1);
+
+
+                    if(red == 1 || green == 1 || blue == 1 || red == 0 || green == 0 || blue == 0){
+                        color = color1;
+                    }else{
+                        color = new Color(red, green, blue, 1);
+                    }
+
                 }
+
                 try {
                     if (zbuffer.bufferCheck(x, y, v1.getC())) {
-                        double k = 0.5;
+                        double k = 0.8;
                         pw.setColor(x, y, new Color(color.getRed() * (1 - k) + color.getRed() * light * k, color.getGreen() * (1 - k) + color.getGreen() * light * k, color.getBlue() * (1 - k) + color.getBlue() * light * k, 1));
                     }
-                } catch (Exception ignored) {
+                } catch (Exception e) {
                 }
             }
         }
     }
+
     private static double clamp(double v) {
         if (v < 0.0) return 0;
-        if (v > 1) return 1.0;
+        if (v > 1.0) return 1.0;
         return v;
     }
 }

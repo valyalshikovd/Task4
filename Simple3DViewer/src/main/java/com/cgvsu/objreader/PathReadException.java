@@ -1,7 +1,5 @@
 package com.cgvsu.objreader;
 
-import com.cgvsu.GuiController;
-
 public class PathReadException extends Exception {
     public PathReadException() {
 

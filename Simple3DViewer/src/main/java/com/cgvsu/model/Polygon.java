@@ -97,8 +97,9 @@ public class Polygon {
         for(String lightName : lightSourceVector.keySet()){
             lightCoeff += -NormalUtils.normalPolygon(this, mesh.sceneVertices).
                     scalarProduct(mesh.sceneVertices.get(this.vertexIndices.get(0)).
-                            subtraction(lightSourceVector.get(lightName))) + 0.05;
+                            subtraction(lightSourceVector.get(lightName)));
         }
+        lightCoeff = lightCoeff * 0.5;
         if(lightCoeff < 0){
             lightCoeff = 0;
         }

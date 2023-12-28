@@ -103,7 +103,7 @@ public class GuiController {
     private ListView<String> listViewCameras;
     private List<String> selectedCameras = new ArrayList<>();
 
-    //Terminal terminalWrite = new Terminal(terminalText);
+
 
 
 
@@ -134,7 +134,7 @@ public class GuiController {
         listViewCameras.getItems().add("mainCamera");
 
 
-        KeyFrame frame = new KeyFrame(Duration.millis(150), event -> {
+        KeyFrame frame = new KeyFrame(Duration.millis(500), event -> {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width , height);
             scene.drawAllMeshes(canvas.getGraphicsContext2D());
@@ -164,16 +164,38 @@ public class GuiController {
         try {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
-            scene.getLoadedModels().put(fileName.toString(), mesh);
-            items.add(fileName.toString());
-            listViewModels.setItems(items);
-            Terminal terminalWrite = new Terminal(terminalText);
+            addModel(fileName.toString(), mesh);
 
-            terminalWrite.logModelLoading(String.valueOf(fileName));
             // todo: обработка ошибок
         } catch (IOException exception) {
 
         }
+    }
+    public void addModel(String path, Model mesh){
+        Terminal terminalWrite = new Terminal(terminalText);
+        if(scene.getLoadedModels().get(path) != null){
+            try{
+                int num = Integer.parseInt(scene.currentModelName.substring(path.length() - 4, path.length() -3));
+                String string = scene.currentModelName.substring(0, path.length() - 4) + (num + 1) + ".obj";
+                scene.getLoadedModels().put(string, mesh);
+                items.add(string);
+                scene.currentModelName = string;
+                terminalWrite.logModelLoading(string);
+                return;
+            }catch (Exception ignored){
+                String string = path.substring(0, path.length() - 4) + 1 + ".obj";
+                scene.getLoadedModels().put(string, mesh);
+                items.add(string);
+                scene.currentModelName = string;
+                terminalWrite.logModelLoading(string);
+                return;
+            }
+        }
+        scene.getLoadedModels().put(path, mesh);
+        items.add(path);
+        scene.currentModelName = path;
+        terminalWrite.logModelLoading(path);
+
     }
 
     @FXML
@@ -272,7 +294,7 @@ public class GuiController {
             return;
         }
         scene.getLoadedModels().get(scene.currentModelName).fillingColor = selectedColor;
-        scene.getLoadedModels().get(scene.currentModelName).isFill = true;
+        scene.getLoadedModels().get(scene.currentModelName).isFill = fillCheckBox.isSelected();
     }
 
     public static void exception(String text) {
@@ -380,6 +402,11 @@ public class GuiController {
     }
 
     public void addLight(ActionEvent actionEvent) {
-        scene.getLightSourses().put(String.valueOf(scene.getLightSourses().size()), new ThreeDimensionalVector(Double.parseDouble(xlight.getText()), Double.parseDouble(ylight.getText()), Double.parseDouble(zlight.getText())));
+        scene.getLightSources().put(String.valueOf(scene.getLightSources().size()), new ThreeDimensionalVector(Double.parseDouble(xlight.getText()), Double.parseDouble(ylight.getText()), Double.parseDouble(zlight.getText())));
+    }
+
+    public void onOpenDeleteUnchangedModel(ActionEvent actionEvent) {
+        scene.getLoadedModels().remove(scene.currentModelName);
+        items.remove(scene.currentModelName);
     }
 }
