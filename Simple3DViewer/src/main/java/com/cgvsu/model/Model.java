@@ -9,8 +9,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
 import java.util.*;
 import java.util.List;
 
@@ -80,7 +78,7 @@ public class Model {
                     isFill,
                     light,
                     zbuffer,
-                    isTextured, pixelReader);
+                    isTextured, image);
         }
     }
 

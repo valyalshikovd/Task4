@@ -314,13 +314,23 @@ public class GuiController {
     }
 
     public void handleFill(ActionEvent actionEvent) {
+        if(texturesCheckBox.isSelected()){
+            triangulationCheckBox.setSelected(true);
+            fillCheckBox.setSelected(true);
+            return;
+        }
         javafx.scene.paint.Color selectedColor = colorpick.getValue();
-        System.out.println(selectedColor);
         if(scene.getLoadedModels().get(scene.currentModelName) == null){
             return;
         }
         scene.getLoadedModels().get(scene.currentModelName).fillingColor = selectedColor;
         scene.getLoadedModels().get(scene.currentModelName).isFill = fillCheckBox.isSelected();
+        scene.getLoadedModels().get(scene.currentModelName).isTriangulate = true;
+        triangulationCheckBox.setSelected(true);
+        if(!fillCheckBox.isSelected()){
+            scene.getLoadedModels().get(scene.currentModelName).isTriangulate = false;
+            triangulationCheckBox.setSelected(false);
+        }
     }
 
     public static void exception(String text) {
@@ -422,7 +432,21 @@ public class GuiController {
     }
 
     public void handleTexture(ActionEvent actionEvent) {
-        scene.getLoadedModels().get(scene.currentModelName).isTextured = texturesCheckBox.isSelected();
+        if(texturesCheckBox.isSelected()){
+            scene.getLoadedModels().get(scene.currentModelName).isTextured = true;
+            scene.getLoadedModels().get(scene.currentModelName).isTriangulate = true;
+            scene.getLoadedModels().get(scene.currentModelName).isFill = true;
+            texturesCheckBox.setSelected(true);
+            triangulationCheckBox.setSelected(true);
+            fillCheckBox.setSelected(true);
+        }else{
+            scene.getLoadedModels().get(scene.currentModelName).isTextured = false;
+            scene.getLoadedModels().get(scene.currentModelName).isTriangulate = false;
+            scene.getLoadedModels().get(scene.currentModelName).isFill = false;
+            texturesCheckBox.setSelected(false);
+            triangulationCheckBox.setSelected(false);
+            fillCheckBox.setSelected(false);
+        }
 
 
     }

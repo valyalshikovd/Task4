@@ -15,7 +15,6 @@ import java.util.List;
 
 public class TriangleRasterization {
 
-   // static Image image = new Image("C:\\Users\\Ulianadev\\IdeaProjects\\Task4Result\\Simple3DViewer\\src\\main\\resources\\texture\\NeutralWrapped.jpg");
     private static final Comparator<ThreeDimensionalVector> COMPARATOR = (a, b) -> {
         int cmp = Double.compare(a.getB(), b.getB());
         if (cmp != 0) {
@@ -34,7 +33,7 @@ public class TriangleRasterization {
             List<TwoDimensionalVector> texture,
             double lightCoefficient,
             Zbuffer zbuffer,
-            PixelReader pixelReader
+            Image image
     ) {
         final var verts = new ThreeDimensionalVector[]{v1, v2, v3};
         Arrays.sort(verts, COMPARATOR);
@@ -46,8 +45,8 @@ public class TriangleRasterization {
         final int y3 = (int) verts[2].getB();
 
         final double area = Math.abs(((NDimensionalVector) v1.subtraction(v2)).crossMagnitude((NDimensionalVector) v1.subtraction(v3)));
-        drawTopTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, lightCoefficient, zbuffer, pixelReader);
-        drawBottomTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, lightCoefficient, zbuffer, pixelReader);
+        drawTopTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, lightCoefficient, zbuffer, image);
+        drawBottomTriangle(pw, x1, y1, x2, y2, x3, y3, v1, color, v2, v3, area, texture, lightCoefficient, zbuffer, image);
     }
 
     private static void drawTopTriangle(
@@ -58,17 +57,22 @@ public class TriangleRasterization {
             final ThreeDimensionalVector v1, Color color,
             final ThreeDimensionalVector v2,
             final ThreeDimensionalVector v3,
-            final double area, List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer, PixelReader pixelReader
+            final double area, List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer, Image image
     ) {
+
+        PixelReader pixelReader = null;
+        if(!texture.isEmpty()){
+            pixelReader = image.getPixelReader();
+        }
 
         Color color1 = null;
         Color color2 = null;
         Color color3 = null;
 
         if(!texture.isEmpty() ) {
-            color1 = pixelReader.getColor((int) (texture.get(0).getA() * 4095), (int) (texture.get(0).getB() * 4095));
-            color2 = pixelReader.getColor((int) (texture.get(1).getA() * 4095), (int) (texture.get(1).getB() * 4095));
-            color3 = pixelReader.getColor((int) (texture.get(2).getA() * 4095), (int) (texture.get(2).getB() * 4095));
+            color1 = pixelReader.getColor((int) (texture.get(0).getA() * image.getWidth()), (int) (texture.get(0).getB() * image.getHeight()));
+            color2 = pixelReader.getColor((int) (texture.get(1).getA() * image.getWidth()), (int) (texture.get(1).getB() * image.getHeight()));
+            color3 = pixelReader.getColor((int) (texture.get(2).getA() * image.getWidth()), (int) (texture.get(2).getB() * image.getHeight()));
         }
         final int x2x1 = x2 - x1;
         final int x3x1 = x3 - x1;
@@ -126,17 +130,22 @@ public class TriangleRasterization {
             final ThreeDimensionalVector v2,
             final ThreeDimensionalVector v3,
             final double area,
-            List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer, PixelReader pixelReader
+            List<TwoDimensionalVector> texture, double light, Zbuffer zbuffer, Image image
     ) {
 
         Color color1 = null;
         Color color2 = null;
         Color color3 = null;
 
+        PixelReader pixelReader = null;
+        if(!texture.isEmpty()){
+            pixelReader = image.getPixelReader();
+        }
+
         if(!texture.isEmpty() ) {
-            color1 = pixelReader.getColor((int) (texture.get(0).getA() * 4095), (int) (texture.get(0).getB() * 4095));
-            color2 = pixelReader.getColor((int) (texture.get(1).getA() * 4095), (int) (texture.get(1).getB() * 4095));
-            color3 = pixelReader.getColor((int) (texture.get(2).getA() * 4095), (int) (texture.get(2).getB() * 4095));
+            color1 = pixelReader.getColor((int) (texture.get(0).getA() * image.getWidth()), (int) (texture.get(0).getB() * image.getHeight()));
+            color2 = pixelReader.getColor((int) (texture.get(1).getA() * image.getWidth()), (int) (texture.get(1).getB() * image.getHeight()));
+            color3 = pixelReader.getColor((int) (texture.get(2).getA() * image.getWidth()), (int) (texture.get(2).getB() * image.getHeight()));
         }
         final int x3x2 = x3 - x2;
         final int x3x1 = x3 - x1;
