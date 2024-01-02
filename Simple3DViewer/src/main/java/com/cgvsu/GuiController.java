@@ -175,6 +175,7 @@ public class GuiController {
     }
     public void addModel(String path, Model mesh){
         Terminal terminalWrite = new Terminal(terminalText);
+        mesh.setScene(scene);
         if(scene.getLoadedModels().get(path) != null){
             try{
                 int num = Integer.parseInt(scene.currentModelName.substring(path.length() - 4, path.length() -3));

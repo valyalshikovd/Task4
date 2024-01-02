@@ -2,27 +2,33 @@ package com.cgvsu.render_engine;
 
 public class Zbuffer {
 
-    private double width;
-    private double height;
-    private double[][] ZBufferMatrix;
+    private static double width;
+    private static double height;
+    private static double[][] ZBufferMatrix;
 
-    public Zbuffer(double width, double height) {
-        this.width = width;
-        this.height = height;
+    public static void setNewZbuffer(double currWidth, double currHeight) {
+        width = currWidth;
+        height = currHeight;
         ZBufferMatrix = new double[(int)width][(int)height];
         clearBuffer();
     }
 
-    public void clearBuffer(){
+    public static void clearBuffer(){
+        if(ZBufferMatrix == null){
+            return;
+        }
         for(int i = 0; i< width; i++){
             for(int j = 0; j< height; j++){
-                this.ZBufferMatrix[i][j] = Double.MAX_VALUE;
+                ZBufferMatrix[i][j] = Double.MAX_VALUE;
             }
         }
     }
-    public boolean bufferCheck(int x, int y, double c){
-        if(this.ZBufferMatrix[x][y] > c){
-            this.ZBufferMatrix[x][y] = c;
+    public static boolean bufferCheck(int x, int y, double c){
+        if(ZBufferMatrix == null){
+            return false;
+        }
+        if(ZBufferMatrix[x][y] > c){
+            ZBufferMatrix[x][y] = c;
             return true;
         }
         return false;

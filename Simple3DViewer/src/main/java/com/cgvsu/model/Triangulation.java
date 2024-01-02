@@ -26,7 +26,7 @@ public class Triangulation {
             List<Integer> threeTextureVertexIndices = getIndicesListForCurrentPolygon(textureVertexIndices, index);
             List<Integer> threeNormalIndices = getIndicesListForCurrentPolygon(normalIndices, index);
 
-            Polygon triangularPolygon = new Polygon();
+            Polygon triangularPolygon = new Polygon(polygon.getModel());
             triangularPolygon.setVertexIndices((ArrayList<Integer>) threeVertexIndices);
             triangularPolygon.setTextureVertexIndices((ArrayList<Integer>) threeTextureVertexIndices);
             triangularPolygon.setNormalIndices((ArrayList<Integer>) threeNormalIndices);

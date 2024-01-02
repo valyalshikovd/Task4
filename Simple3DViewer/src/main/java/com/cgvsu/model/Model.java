@@ -3,6 +3,7 @@ import com.cgvsu.Math.AffineTransormation.AffineTransformation;
 import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Math.Vectors.TwoDimensionalVector;
+import com.cgvsu.render_engine.Scene;
 import com.cgvsu.render_engine.Zbuffer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -33,8 +34,8 @@ public class Model {
     public Color fillingColor = null;
     public boolean isFill;
     public boolean isTextured = false;
-
     public Image image = null;
+    private Scene scene;
 
 
     public Model(ArrayList<ThreeDimensionalVector> vertices,
@@ -49,7 +50,7 @@ public class Model {
 
 
 
-    public void changeModel(NDimensionalMatrix modelViewProjectionMatrix){
+    public void changeModel(){
         sceneVertices.clear();
         NDimensionalMatrix m = (NDimensionalMatrix)new AffineTransformation().scale(scaleX, scaleY, scaleZ)
                 .multiplyMatrix(new AffineTransformation().rotate((float) rotateX, (float) rotateY, (float) rotateZ))
@@ -59,26 +60,10 @@ public class Model {
         }
     }
 
-    public void draw(GraphicsContext g, NDimensionalMatrix modelViewProjectionMatrix, int width, int height, HashMap< String, ThreeDimensionalVector> light , Zbuffer zbuffer){
-        List<Polygon> currPoligons = polygons;
-        changeModel(modelViewProjectionMatrix);
-        PixelReader pixelReader = null;
-        if (image != null){
-            pixelReader = image.getPixelReader();
-        }
-
-        if(isTriangulate || fillingColor == null){
-            currPoligons = triangulate();
-        }
-        for (Polygon p : currPoligons){
-            p.drawPolygon(g, modelViewProjectionMatrix, this,
-                    width,
-                    height,
-                    fillingColor,
-                    isFill,
-                    light,
-                    zbuffer,
-                    isTextured, image);
+    public void draw(GraphicsContext g){
+        changeModel();
+        for (Polygon p : checkTriangulate(polygons)){
+            p.drawPolygon(g,  this);
         }
     }
 
@@ -111,5 +96,20 @@ public class Model {
 
     public ArrayList<ThreeDimensionalVector> getNormals() {
         return normals;
+    }
+
+    private List<Polygon> checkTriangulate(List<Polygon> currPoligons){
+        if(isTriangulate || fillingColor == null){
+            currPoligons = triangulate();
+        }
+        return currPoligons;
+    }
+
+    public Scene getScene() {
+        return scene;
+    }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
     }
 }

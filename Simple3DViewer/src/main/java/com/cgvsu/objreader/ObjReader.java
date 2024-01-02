@@ -21,6 +21,7 @@ public class ObjReader {
 		ArrayList<TwoDimensionalVector> textureVertices = new ArrayList<>();
 		ArrayList<ThreeDimensionalVector> normals = new ArrayList<>();
 		ArrayList<Polygon> polygons = new ArrayList<>();
+		Model resModel = new Model(vertices, textureVertices, normals, polygons);
 		int lineInd = 0;
 		Scanner scanner = new Scanner(fileContent);
 		while (scanner.hasNextLine()) {
@@ -39,7 +40,7 @@ public class ObjReader {
 				case OBJ_TEXTURE_TOKEN -> textureVertices.add(parseTextureVertex(wordsInLine, lineInd));
 				case OBJ_NORMAL_TOKEN -> normals.add(parseNormal(wordsInLine, lineInd));
 				case OBJ_FACE_TOKEN -> {
-					polygons.add(parseFace(wordsInLine, lineInd));
+					polygons.add(parseFace(wordsInLine, lineInd, resModel ));
 					polygonIds.add(lineInd);
 				}
 				case OBJ_COMMENT_TOKEN -> System.out.println(line);
@@ -52,7 +53,7 @@ public class ObjReader {
 		int lengthTextureVertex = textureVertices.size();
 		int lengthNormal = normals.size();
 		format(polygons, lengthVertex, lengthTextureVertex, lengthNormal);
-		return new Model(vertices, textureVertices, normals, polygons);
+		return resModel;
 	}
 
 	protected static ThreeDimensionalVector parseVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
@@ -107,7 +108,7 @@ public class ObjReader {
 		}
 	}
 
-	protected static Polygon parseFace(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
+	protected static Polygon parseFace(final ArrayList<String> wordsInLineWithoutToken, int lineInd,  Model currModel) {
 		if (wordsInLineWithoutToken.size()<3){
 			throw new ObjReaderException("Not enough vertex to create polygon.", lineInd);
 		}
@@ -129,7 +130,7 @@ public class ObjReader {
 				throw new ObjReaderException("The vertices of the polygon must not be repeated.", lineInd);
 			}
 		}
-		Polygon result = new Polygon();
+		Polygon result = new Polygon(currModel);
 		result.setVertexIndices(onePolygonVertexIndices);
 		result.setTextureVertexIndices(onePolygonTextureVertexIndices);
 		result.setNormalIndices(onePolygonNormalIndices);

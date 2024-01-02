@@ -6,16 +6,12 @@ import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.model.Model;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-
 import static com.cgvsu.render_engine.GraphicConveyor.rotateScaleTranslate;
 
 public class Scene {
     private Camera camera;
-
     private int width;
     private int height;
     private FourDimensionalMatrix modelMatrix;
@@ -23,13 +19,12 @@ public class Scene {
     private FourDimensionalMatrix projectionMatrix;
     private NDimensionalMatrix modelViewProjectionMatrix;
     public String currentModelName = null;
+    private final Map<String, Camera> addedCameras = new HashMap<>();
+    private final Map<String, Model> loadedModels = new HashMap<>();
+    private final Map<String, Image> loadedTextures = new HashMap<>();
+    private final Map<String, ThreeDimensionalVector> lightSources = new HashMap<>();
 
-    private Map<String, Camera> addedCameras = new HashMap<>();
-    private Map<String, Model> loadedModels = new HashMap<>();
-    private Map<String, Image> loadedTextures = new HashMap<>();
-    private Map<String, ThreeDimensionalVector> lightSources = new HashMap<>();
 
-    private Zbuffer zbuffer;
 
 
 
@@ -42,31 +37,20 @@ public class Scene {
         this.camera = camera;
         this.width = width;
         this.height = height;
-
-        this.zbuffer = new Zbuffer(width, height);
-
-
-
+        Zbuffer.setNewZbuffer(width, height);
         this.modelMatrix = rotateScaleTranslate();
         this.viewMatrix = camera.getViewMatrix();
         this.projectionMatrix = camera.getProjectionMatrix();
-
         this.modelViewProjectionMatrix = modelMatrix;
         modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(viewMatrix);
         modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(projectionMatrix);
-
-        Path fileName = Path.of("C:/Users/770vd//Desktop/WrapHead.obj");
-
     }
-
-
     public Map<String, Camera> getAddedCameras() {
         return addedCameras;
     }
     public Map<String, Model> getLoadedModels() {
         return loadedModels;
     }
-
     public void setCamera(Camera camera, int width, int height) {
         this.camera = camera;
         this.height = height;
@@ -80,47 +64,56 @@ public class Scene {
         modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(viewMatrix);
         this.modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(projectionMatrix);
     }
-
-
     public void setWidth(int width) {
         this.width = width;
     }
-
     public void setHeight(int height) {
         this.height = height;
     }
-
-
     public void drawAllMeshes(GraphicsContext g) {
-        this.modelMatrix = rotateScaleTranslate();
-        this.viewMatrix = camera.getViewMatrix();
-        this.projectionMatrix = camera.getProjectionMatrix();
-
-        this.modelViewProjectionMatrix = modelMatrix;
-        modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(viewMatrix);
-        this.modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(projectionMatrix);
-
-        zbuffer.clearBuffer();
-
+        sceneUpdate();
         for (String model : loadedModels.keySet()) {
-            loadedModels.get(model).draw(g, modelViewProjectionMatrix, width, height, (HashMap<String, ThreeDimensionalVector>) lightSources, zbuffer);
+            loadedModels.get(model).draw(g);
         }
     }
-
     public void setCurrentCamera(Camera camera) {
         setCamera(camera, width,height);
     }
-
     public Map<String, Image> getLoadedTextures() {
         return loadedTextures;
     }
-
     public Camera getCamera() {
         return camera;
     }
 
-
-
-
-
+    public int getWidth() {
+        return width;
+    }
+    public int getHeight() {
+        return height;
+    }
+    public FourDimensionalMatrix getModelMatrix() {
+        return modelMatrix;
+    }
+    public FourDimensionalMatrix getViewMatrix() {
+        return viewMatrix;
+    }
+    public FourDimensionalMatrix getProjectionMatrix() {
+        return projectionMatrix;
+    }
+    public NDimensionalMatrix getModelViewProjectionMatrix() {
+        return modelViewProjectionMatrix;
+    }
+    public String getCurrentModelName() {
+        return currentModelName;
+    }
+    private void sceneUpdate(){
+        this.modelMatrix = rotateScaleTranslate();
+        this.viewMatrix = camera.getViewMatrix();
+        this.projectionMatrix = camera.getProjectionMatrix();
+        this.modelViewProjectionMatrix = modelMatrix;
+        modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(viewMatrix);
+        this.modelViewProjectionMatrix = (NDimensionalMatrix) modelViewProjectionMatrix.multiplyMatrix(projectionMatrix);
+        Zbuffer.clearBuffer();
+    }
 }

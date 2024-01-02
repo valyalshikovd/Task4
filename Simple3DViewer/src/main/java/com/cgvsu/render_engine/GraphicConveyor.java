@@ -20,27 +20,17 @@ public class GraphicConveyor {
                 new FourDimensionalVector(0,0,0,1)
         );
     }
-
-
     public static FourDimensionalMatrix lookAt(Vector eye, Vector target) {
         return lookAt(new ThreeDimensionalVector(eye.getArrValues()[0],eye.getArrValues()[1],eye.getArrValues()[2]), new ThreeDimensionalVector(target.getArrValues()[0],target.getArrValues()[1],target.getArrValues()[2]), new ThreeDimensionalVector(0F, 1.0F, 0F));
     }
-    // методы соотвествуют главе "Из мировых координат в камеру" стр 59
     public static FourDimensionalMatrix lookAt(ThreeDimensionalVector eye, ThreeDimensionalVector target, ThreeDimensionalVector up) {
         Vector tempNd = target.subtraction(eye);
         ThreeDimensionalVector resultZ = new ThreeDimensionalVector(tempNd.getArrValues()[0], tempNd.getArrValues()[1],tempNd.getArrValues()[2]);
         ThreeDimensionalVector resultX = up.vectorProduct(resultZ);
         ThreeDimensionalVector resultY = resultZ.vectorProduct(resultX);
-
-
-
         resultX = resultX.normalization();
         resultY =resultY.normalization();
         resultZ = resultZ.normalization();
-
- /*
- внимание работа с векторамии столбцами
-  */
         return new FourDimensionalMatrix(
                 new NDimensionalVector(resultX.getA(), resultY.getA(), resultZ.getA(), 0),
                 new NDimensionalVector(resultX.getB(), resultY.getB(), resultZ.getB(), 0),
@@ -50,8 +40,6 @@ public class GraphicConveyor {
     }
 
     public static FourDimensionalMatrix perspective(
-
-      //метод соответствует главе "Из системы координат в плоскость проецирования" стр 61
             final float fov,
             final float aspectRatio,
             final float nearPlane,

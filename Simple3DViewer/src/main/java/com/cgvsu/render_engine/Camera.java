@@ -56,7 +56,6 @@ public class Camera {
     public FourDimensionalMatrix getProjectionMatrix() {
         return GraphicConveyor.perspective(fov, aspectRatio, nearPlane, farPlane);
     }
-
     private Vector position;
     private Vector target;
     private float fov;

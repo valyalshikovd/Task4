@@ -4,6 +4,7 @@ import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Math.Vectors.TwoDimensionalVector;
 import com.cgvsu.Rasterization.TriangleRasterization;
+import com.cgvsu.render_engine.Scene;
 import com.cgvsu.render_engine.Zbuffer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -23,12 +24,19 @@ public class Polygon {
     private ArrayList<Integer> vertexIndices;
     private ArrayList<Integer> textureVertexIndices;
     private ArrayList<Integer> normalIndices;
-    private boolean isTexturing;
-    public Polygon() {
+    private Model model;
+
+    public Polygon(Model model) {
         vertexIndices = new ArrayList<Integer>();
         textureVertexIndices = new ArrayList<Integer>();
         normalIndices = new ArrayList<Integer>();
+        this.model = model;
     }
+
+    public Model getModel() {
+        return model;
+    }
+
     public void setVertexIndices(ArrayList<Integer> vertexIndices) {
         assert vertexIndices.size() >= 3;
         this.vertexIndices = vertexIndices;
@@ -53,41 +61,30 @@ public class Polygon {
         return normalIndices;
     }
 
-    public void drawPolygon(GraphicsContext g,
-                            NDimensionalMatrix modelViewProjectionMatrix,
-                            Model mesh,
-                            int width, int height,
-                            Color fillingColor,
-                            boolean isFill,
-                            HashMap< String, ThreeDimensionalVector> light,
-                            Zbuffer zbuffer, boolean isTexturing, Image image){
-
-
+    public void drawPolygon(GraphicsContext g, Model model){
         ArrayList<ThreeDimensionalVector> resultPoints = new ArrayList<>();
         ArrayList<TwoDimensionalVector> textureVertexes = new ArrayList<>();
+
         int nVerticesInPolygon = vertexIndices.size();
+
         for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
-            ThreeDimensionalVector vertex =  mesh.sceneVertices.get(vertexIndices.get(vertexInPolygonInd));
-            vertex = vertexToSurface(multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertex), width, height);
-
+            ThreeDimensionalVector vertex =  model.sceneVertices.get(vertexIndices.get(vertexInPolygonInd));
+            vertex = vertexToSurface(multiplyMatrix4ByVector3(model.getScene().getModelViewProjectionMatrix(), vertex), model.getScene().getWidth(), model.getScene().getHeight());
             resultPoints.add(new ThreeDimensionalVector(vertex.getA(), vertex.getB(), vertex.getC()));
-
-            if(isTexturing && mesh.image != null){
-                textureVertexes.add(mesh.textureVertices.get(textureVertexIndices.get(vertexInPolygonInd)));
-            }
+            texturing(textureVertexes, vertexInPolygonInd, model);
         }
 
 
-        if( isFill ) {
-            double lightCoefficient = calculateLightCoefficient(mesh, light);
+        if(model.isFill) {
+            double lightCoefficient = calculateLightCoefficient(model, (HashMap<String, ThreeDimensionalVector>) model.getScene().getLightSources());
             TriangleRasterization.drawTriangle(g.getPixelWriter(),
                     new ThreeDimensionalVector(resultPoints.get(0).getA(), resultPoints.get(0).getB(), resultPoints.get(0).getC()),
                     new ThreeDimensionalVector(resultPoints.get(1).getA(), resultPoints.get(1).getB(), resultPoints.get(1).getC()),
                     new ThreeDimensionalVector(resultPoints.get(2).getA(), resultPoints.get(2).getB(), resultPoints.get(2).getC()),
-                    fillingColor,
+                    model.fillingColor,
                     textureVertexes,
                     lightCoefficient,
-                    zbuffer, image);
+                     model.image);
             textureVertexes.clear();
         }else {
             drawingPolygonNet(g, resultPoints);
@@ -101,7 +98,7 @@ public class Polygon {
                     scalarProduct(mesh.sceneVertices.get(this.vertexIndices.get(0)).
                             subtraction(lightSourceVector.get(lightName)));
         }
-        lightCoeff = lightCoeff * 0.5;
+        lightCoeff = 0.1 * lightCoeff;
         if(lightCoeff < 0){
             lightCoeff = 0;
         }
@@ -125,5 +122,10 @@ public class Polygon {
                     resultPoints.get(vertexIndices.size() - 1).getB(),
                     resultPoints.get(0).getA(),
                     resultPoints.get(0).getB());
+    }
+    private void texturing(ArrayList<TwoDimensionalVector> textureVertexes, int vertexInPolygonInd, Model model){
+        if(model.isTextured && model.image != null){
+            textureVertexes.add(model.textureVertices.get(textureVertexIndices.get(vertexInPolygonInd)));
+        }
     }
 }
