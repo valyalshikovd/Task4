@@ -1,13 +1,19 @@
 package com.cgvsu.render_engine;
 
+import com.cgvsu.Math.AffineTransormation.AffineTransformation;
 import com.cgvsu.Math.Matrix.FourDimensionalMatrix;
 import com.cgvsu.Math.Matrix.NDimensionalMatrix;
+import com.cgvsu.Math.Vectors.NDimensionalVector;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.model.Model;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.cgvsu.model.Model.multiplyMatrix4ByVector3;
 import static com.cgvsu.render_engine.GraphicConveyor.rotateScaleTranslate;
 
 public class Scene {
@@ -108,6 +114,7 @@ public class Scene {
         return currentModelName;
     }
     private void sceneUpdate(){
+        System.out.println(Arrays.toString(camera.getPosition().getArrValues()));
         this.modelMatrix = rotateScaleTranslate();
         this.viewMatrix = camera.getViewMatrix();
         this.projectionMatrix = camera.getProjectionMatrix();

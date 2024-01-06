@@ -19,6 +19,7 @@ public class Camera {
         this.aspectRatio = aspectRatio;
         this.nearPlane = nearPlane;
         this.farPlane = farPlane;
+        this.currentDistantionToTarget = position.length();
     }
 
     public void setPosition(final Vector position) {
@@ -56,11 +57,21 @@ public class Camera {
     public FourDimensionalMatrix getProjectionMatrix() {
         return GraphicConveyor.perspective(fov, aspectRatio, nearPlane, farPlane);
     }
+
+    public double getCurrentDistantionToTarget() {
+        return currentDistantionToTarget;
+    }
+
+    public void setCurrentDistantionToTarget(double currentDistantionToTarget) {
+        this.currentDistantionToTarget = currentDistantionToTarget;
+    }
+
     private Vector position;
     private Vector target;
     private float fov;
     private float aspectRatio;
     private float nearPlane;
     private float farPlane;
+    private double currentDistantionToTarget;
 
 }

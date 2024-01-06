@@ -1,15 +1,11 @@
 package com.cgvsu.model;
 
-import com.cgvsu.Math.Matrix.NDimensionalMatrix;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Math.Vectors.TwoDimensionalVector;
-import com.cgvsu.Rasterization.TriangleRasterization;
-import com.cgvsu.render_engine.Scene;
-import com.cgvsu.render_engine.Zbuffer;
+import com.cgvsu.Rasterization.InterfaceTriangle;
+import com.cgvsu.Rasterization.TexturedTriangle;
+import com.cgvsu.Rasterization.Triangle;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +20,8 @@ public class Polygon {
     private ArrayList<Integer> vertexIndices;
     private ArrayList<Integer> textureVertexIndices;
     private ArrayList<Integer> normalIndices;
+    private ArrayList<ThreeDimensionalVector> resultPoints = new ArrayList<>();
+    private ArrayList<TwoDimensionalVector> textureVertecies = new ArrayList<>();
     private Model model;
 
     public Polygon(Model model) {
@@ -53,6 +51,14 @@ public class Polygon {
         return vertexIndices;
     }
 
+    public ArrayList<ThreeDimensionalVector> getResultPoints() {
+        return resultPoints;
+    }
+
+    public ArrayList<TwoDimensionalVector> getTextureVertecies() {
+        return textureVertecies;
+    }
+
     public ArrayList<Integer> getTextureVertexIndices() {
         return textureVertexIndices;
     }
@@ -61,9 +67,8 @@ public class Polygon {
         return normalIndices;
     }
 
-    public void drawPolygon(GraphicsContext g, Model model){
-        ArrayList<ThreeDimensionalVector> resultPoints = new ArrayList<>();
-        ArrayList<TwoDimensionalVector> textureVertexes = new ArrayList<>();
+    public void drawPolygon(GraphicsContext g, Model model)  {
+        textureVertecies = new ArrayList<>();
 
         int nVerticesInPolygon = vertexIndices.size();
 
@@ -71,24 +76,24 @@ public class Polygon {
             ThreeDimensionalVector vertex =  model.sceneVertices.get(vertexIndices.get(vertexInPolygonInd));
             vertex = vertexToSurface(multiplyMatrix4ByVector3(model.getScene().getModelViewProjectionMatrix(), vertex), model.getScene().getWidth(), model.getScene().getHeight());
             resultPoints.add(new ThreeDimensionalVector(vertex.getA(), vertex.getB(), vertex.getC()));
-            texturing(textureVertexes, vertexInPolygonInd, model);
+            texturing(textureVertecies, vertexInPolygonInd, model);
         }
 
+        InterfaceTriangle currentTriangle = null;
+        double lightCoefficient = calculateLightCoefficient(model, (HashMap<String, ThreeDimensionalVector>) model.getScene().getLightSources());
 
         if(model.isFill) {
-            double lightCoefficient = calculateLightCoefficient(model, (HashMap<String, ThreeDimensionalVector>) model.getScene().getLightSources());
-            TriangleRasterization.drawTriangle(g.getPixelWriter(),
-                    new ThreeDimensionalVector(resultPoints.get(0).getA(), resultPoints.get(0).getB(), resultPoints.get(0).getC()),
-                    new ThreeDimensionalVector(resultPoints.get(1).getA(), resultPoints.get(1).getB(), resultPoints.get(1).getC()),
-                    new ThreeDimensionalVector(resultPoints.get(2).getA(), resultPoints.get(2).getB(), resultPoints.get(2).getC()),
-                    model.fillingColor,
-                    textureVertexes,
-                    lightCoefficient,
-                     model.image);
-            textureVertexes.clear();
-        }else {
-            drawingPolygonNet(g, resultPoints);
+            currentTriangle = new Triangle(this, lightCoefficient);
         }
+        if(model.isTextured && model.image != null){
+            currentTriangle = new TexturedTriangle(this, lightCoefficient);
+        }
+        if(currentTriangle == null){
+            drawingPolygonNet(g, resultPoints);
+            return;
+        }
+        currentTriangle.drawTriangle(g.getPixelWriter());
+
     }
 
     private double calculateLightCoefficient(Model mesh, HashMap< String, ThreeDimensionalVector> lightSourceVector ){

@@ -1,5 +1,8 @@
 package com.cgvsu;
 
+import com.cgvsu.Math.AffineTransormation.AffineTransformation;
+import com.cgvsu.Math.Matrix.NDimensionalMatrix;
+import com.cgvsu.Math.Vectors.NDimensionalVector;
 import com.cgvsu.Math.Vectors.ThreeDimensionalVector;
 import com.cgvsu.Parser.Parser;
 import com.cgvsu.deleter.DeleterVertices;
@@ -31,15 +34,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.render_engine.Camera;
+
+import static com.cgvsu.model.Model.multiplyMatrix4ByVector3;
 
 public class GuiController {
 
@@ -136,7 +138,7 @@ public class GuiController {
         listViewCameras.getItems().add("mainCamera");
 
 
-        KeyFrame frame = new KeyFrame(Duration.millis(500), event -> {
+        KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width , height);
             scene.drawAllMeshes(canvas.getGraphicsContext2D());
@@ -227,33 +229,66 @@ public class GuiController {
 
     @FXML
     public void handleCameraForward(ActionEvent actionEvent) {
-        scene.getCamera().movePosition(new ThreeDimensionalVector(0, 0, -TRANSLATION));
+        scene.getCamera().movePosition(scene.getCamera().getPosition().addition(scene.getCamera().getPosition().normalization().scale(-1)));
+        scene.getCamera().setCurrentDistantionToTarget(scene.getCamera().getPosition().length());
     }
 
     @FXML
     public void handleCameraBackward(ActionEvent actionEvent) {
-        scene.getCamera().movePosition(new ThreeDimensionalVector(0, 0, TRANSLATION));
+        System.out.println(Arrays.toString(scene.getCamera().getPosition().normalization().getArrValues()));
+        scene.getCamera().movePosition(scene.getCamera().getPosition().addition(scene.getCamera().getPosition().normalization()));
+        scene.getCamera().setCurrentDistantionToTarget(scene.getCamera().getPosition().length());
     }
 
     @FXML
     public void handleCameraLeft(ActionEvent actionEvent) {
-        scene.getCamera().movePosition(new ThreeDimensionalVector(TRANSLATION, 0, 0));
+        camera.setPosition(multiplyMatrix4ByVector3((NDimensionalMatrix) new AffineTransformation().rotate(0, -0.1F,0),
+                new ThreeDimensionalVector(camera.getPosition().getArrValues()[0],camera.getPosition().getArrValues()[1],camera.getPosition().getArrValues()[2])));
     }
 
 
     @FXML
     public void handleCameraRight(ActionEvent actionEvent) {
-        scene.getCamera().movePosition(new ThreeDimensionalVector(-TRANSLATION, 0, 0));
+        camera.setPosition(multiplyMatrix4ByVector3((NDimensionalMatrix) new AffineTransformation().rotate( 0, (float) 0.1,0),
+                new ThreeDimensionalVector(camera.getPosition().getArrValues()[0],camera.getPosition().getArrValues()[1],camera.getPosition().getArrValues()[2])));
     }
 
     @FXML
     public void handleCameraUp(ActionEvent actionEvent) {
-        scene.getCamera().movePosition(new ThreeDimensionalVector(0, TRANSLATION, 0));
+        if(Math.abs(camera.getPosition().getArrValues()[0]) < 0.5 && Math.abs(camera.getPosition().getArrValues()[2] - 0) < 0.5 && camera.getPosition().getArrValues()[1] > 0){
+            return;
+        }
+        double distantionToTarget = camera.getCurrentDistantionToTarget();
+        if(camera.getPosition().getArrValues()[1] < 0){
+            double x = camera.getPosition().getArrValues()[0];
+            double z = camera.getPosition().getArrValues()[2];
+            double z1 = Math.pow((distantionToTarget * distantionToTarget / ((x / z) * (x / z) + 1) ), 0.5);
+            double x1 = (z1 * x) / z;
+            NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(x1,0,z1).subtraction(camera.getPosition()).normalization();
+            camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
+            return;
+        };
+        NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(0,distantionToTarget,0).subtraction(camera.getPosition()).normalization();
+        camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
     }
 
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) {
-        scene.getCamera().movePosition(new ThreeDimensionalVector(0, -TRANSLATION, 0));
+        if(Math.abs(camera.getPosition().getArrValues()[0]) < 0.5 && Math.abs(camera.getPosition().getArrValues()[2]) < 0.5 && camera.getPosition().getArrValues()[1] < 0){
+            return;
+        }
+        double distantionToTarget = camera.getCurrentDistantionToTarget();
+        if(camera.getPosition().getArrValues()[1] > 0){
+            double x = camera.getPosition().getArrValues()[0];
+            double z = camera.getPosition().getArrValues()[2];
+            double z1 = Math.pow((distantionToTarget * distantionToTarget / ((x / z) * (x / z) + 1) ), 0.5);
+            double x1 = (z1 * x) / z;
+            NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(x1,0,z1).subtraction(camera.getPosition()).normalization();
+            camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
+            return;
+        }
+        NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(0,-distantionToTarget,0).subtraction(camera.getPosition()).normalization();
+        camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
     }
 
 
@@ -460,4 +495,5 @@ public class GuiController {
         scene.getLoadedModels().remove(scene.currentModelName);
         items.remove(scene.currentModelName);
     }
+
 }
