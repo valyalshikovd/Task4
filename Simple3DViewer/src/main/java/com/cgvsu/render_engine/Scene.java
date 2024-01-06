@@ -114,7 +114,6 @@ public class Scene {
         return currentModelName;
     }
     private void sceneUpdate(){
-        System.out.println(Arrays.toString(camera.getPosition().getArrValues()));
         this.modelMatrix = rotateScaleTranslate();
         this.viewMatrix = camera.getViewMatrix();
         this.projectionMatrix = camera.getProjectionMatrix();

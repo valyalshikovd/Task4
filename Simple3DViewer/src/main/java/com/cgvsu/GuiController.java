@@ -24,6 +24,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -45,7 +46,7 @@ import static com.cgvsu.model.Model.multiplyMatrix4ByVector3;
 
 public class GuiController {
 
-    final private float TRANSLATION = 10;
+
     @FXML
     public AnchorPane sliderTheme2;
     public AnchorPane sliderRender;
@@ -85,8 +86,67 @@ public class GuiController {
     public TextField polygonsToDeleteField;
     public CheckBox checkFreeVertices;
     public Text texturesIsLoaded;
+    private double prevX;
+    private double prevY;
 
+    @FXML
+    private void handleMousePressed(MouseEvent event) {
+        if (event.isPrimaryButtonDown()) {
+            double x = event.getX();
+            double y = event.getY();
+            System.out.println("ЛКМ зажата в точке (" + x + ", " + y + ")");
+        }
+    }
 
+    @FXML
+    private void handleMouseDragged(MouseEvent event) {
+        if (event.isPrimaryButtonDown()) {
+            if(prevY < event.getY()){
+                if(Math.abs(camera.getPosition().getArrValues()[0]) < 0.5 && Math.abs(camera.getPosition().getArrValues()[2] - 0) < 0.5 && camera.getPosition().getArrValues()[1] > 0){
+                    return;
+                }
+                double distantionToTarget = camera.getCurrentDistantionToTarget();
+                if(camera.getPosition().getArrValues()[1] < 0){
+                    double x = camera.getPosition().getArrValues()[0];
+                    double z = camera.getPosition().getArrValues()[2];
+                    double z1 = Math.pow((distantionToTarget * distantionToTarget / ((x / z) * (x / z) + 1) ), 0.5);
+                    double x1 = (z1 * x) / z;
+                    NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(x1,0,z1).subtraction(camera.getPosition()).normalization();
+                    camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
+                    return;
+                };
+                NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(0,distantionToTarget,0).subtraction(camera.getPosition()).normalization();
+                camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
+            }
+            if(prevY > event.getY()){
+                if(Math.abs(camera.getPosition().getArrValues()[0]) < 0.5 && Math.abs(camera.getPosition().getArrValues()[2]) < 0.5 && camera.getPosition().getArrValues()[1] < 0){
+                    return;
+                }
+                double distantionToTarget = camera.getCurrentDistantionToTarget();
+                if(camera.getPosition().getArrValues()[1] > 0){
+                    double x = camera.getPosition().getArrValues()[0];
+                    double z = camera.getPosition().getArrValues()[2];
+                    double z1 = Math.pow((distantionToTarget * distantionToTarget / ((x / z) * (x / z) + 1) ), 0.5);
+                    double x1 = (z1 * x) / z;
+                    NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(x1,0,z1).subtraction(camera.getPosition()).normalization();
+                    camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
+                    return;
+                }
+                NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(0,-distantionToTarget,0).subtraction(camera.getPosition()).normalization();
+                camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
+            }
+            if(prevX > event.getX()){
+                camera.setPosition(multiplyMatrix4ByVector3((NDimensionalMatrix) new AffineTransformation().rotate(0, 0.03F,0),
+                        new ThreeDimensionalVector(camera.getPosition().getArrValues()[0],camera.getPosition().getArrValues()[1],camera.getPosition().getArrValues()[2])));
+            }
+            if(prevX < event.getX()){
+                camera.setPosition(multiplyMatrix4ByVector3((NDimensionalMatrix) new AffineTransformation().rotate(0, -0.03F,0),
+                        new ThreeDimensionalVector(camera.getPosition().getArrValues()[0],camera.getPosition().getArrValues()[1],camera.getPosition().getArrValues()[2])));
+            }
+            prevX = event.getX();
+            prevY = event.getY();
+        }
+    }
     @FXML
     AnchorPane anchorPane;
 
@@ -140,7 +200,7 @@ public class GuiController {
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
 
-            canvas.getGraphicsContext2D().clearRect(0, 0, width , height);
+            canvas.getGraphicsContext2D().clearRect(0, 0, 1600 , 900);
             scene.drawAllMeshes(canvas.getGraphicsContext2D());
 
         });
@@ -226,70 +286,6 @@ public class GuiController {
         texturesIsLoaded.setText("The texture is not loaded.");
     }
 
-
-    @FXML
-    public void handleCameraForward(ActionEvent actionEvent) {
-        scene.getCamera().movePosition(scene.getCamera().getPosition().addition(scene.getCamera().getPosition().normalization().scale(-1)));
-        scene.getCamera().setCurrentDistantionToTarget(scene.getCamera().getPosition().length());
-    }
-
-    @FXML
-    public void handleCameraBackward(ActionEvent actionEvent) {
-        System.out.println(Arrays.toString(scene.getCamera().getPosition().normalization().getArrValues()));
-        scene.getCamera().movePosition(scene.getCamera().getPosition().addition(scene.getCamera().getPosition().normalization()));
-        scene.getCamera().setCurrentDistantionToTarget(scene.getCamera().getPosition().length());
-    }
-
-    @FXML
-    public void handleCameraLeft(ActionEvent actionEvent) {
-        camera.setPosition(multiplyMatrix4ByVector3((NDimensionalMatrix) new AffineTransformation().rotate(0, -0.1F,0),
-                new ThreeDimensionalVector(camera.getPosition().getArrValues()[0],camera.getPosition().getArrValues()[1],camera.getPosition().getArrValues()[2])));
-    }
-
-
-    @FXML
-    public void handleCameraRight(ActionEvent actionEvent) {
-        camera.setPosition(multiplyMatrix4ByVector3((NDimensionalMatrix) new AffineTransformation().rotate( 0, (float) 0.1,0),
-                new ThreeDimensionalVector(camera.getPosition().getArrValues()[0],camera.getPosition().getArrValues()[1],camera.getPosition().getArrValues()[2])));
-    }
-
-    @FXML
-    public void handleCameraUp(ActionEvent actionEvent) {
-        if(Math.abs(camera.getPosition().getArrValues()[0]) < 0.5 && Math.abs(camera.getPosition().getArrValues()[2] - 0) < 0.5 && camera.getPosition().getArrValues()[1] > 0){
-            return;
-        }
-        double distantionToTarget = camera.getCurrentDistantionToTarget();
-        if(camera.getPosition().getArrValues()[1] < 0){
-            double x = camera.getPosition().getArrValues()[0];
-            double z = camera.getPosition().getArrValues()[2];
-            double z1 = Math.pow((distantionToTarget * distantionToTarget / ((x / z) * (x / z) + 1) ), 0.5);
-            double x1 = (z1 * x) / z;
-            NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(x1,0,z1).subtraction(camera.getPosition()).normalization();
-            camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
-            return;
-        };
-        NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(0,distantionToTarget,0).subtraction(camera.getPosition()).normalization();
-        camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
-    }
-
-    @FXML
-    public void handleCameraDown(ActionEvent actionEvent) {
-        if(Math.abs(camera.getPosition().getArrValues()[0]) < 0.5 && Math.abs(camera.getPosition().getArrValues()[2]) < 0.5 && camera.getPosition().getArrValues()[1] < 0){
-            return;
-        }
-        double distantionToTarget = camera.getCurrentDistantionToTarget();
-        if(camera.getPosition().getArrValues()[1] > 0){
-            double x = camera.getPosition().getArrValues()[0];
-            double z = camera.getPosition().getArrValues()[2];
-            double z1 = Math.pow((distantionToTarget * distantionToTarget / ((x / z) * (x / z) + 1) ), 0.5);
-            double x1 = (z1 * x) / z;
-            NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(x1,0,z1).subtraction(camera.getPosition()).normalization();
-            camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
-            return;
-        }
-        NDimensionalVector normalizideVectorOfShifting = (NDimensionalVector) new NDimensionalVector(0,-distantionToTarget,0).subtraction(camera.getPosition()).normalization();
-        camera.setPosition(camera.getPosition().addition(normalizideVectorOfShifting));
-    }
 
 
     public void handleModelList(MouseEvent mouseEvent) {
