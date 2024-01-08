@@ -94,7 +94,19 @@ public class GuiController {
         if (event.isPrimaryButtonDown()) {
             double x = event.getX();
             double y = event.getY();
-            System.out.println("ЛКМ зажата в точке (" + x + ", " + y + ")");
+        }
+    }
+    @FXML
+    private void handleScroll(ScrollEvent event) {
+        double deltaY = event.getDeltaY();
+
+        if (deltaY > 0) {
+            scene.getCamera().movePosition(scene.getCamera().getPosition().normalization());
+            scene.getCamera().setCurrentDistantionToTarget(scene.getCamera().getPosition().length());
+        } else if (deltaY < 0) {
+            scene.getCamera().movePosition(scene.getCamera().getPosition().normalization().scale(-1));
+            scene.getCamera().setCurrentDistantionToTarget(scene.getCamera().getPosition().length());
+
         }
     }
 
@@ -229,8 +241,6 @@ public class GuiController {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
             addModel(fileName.toString(), mesh);
-
-            // todo: обработка ошибок
         } catch (IOException exception) {
 
         }
@@ -268,6 +278,7 @@ public class GuiController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image (*.png, *.jpg, *.jpeg)", "*.png", "*.jpg", "*.jpeg"));
         fileChooser.setTitle("Load Image");
+
 
         File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
         if (file == null) {
